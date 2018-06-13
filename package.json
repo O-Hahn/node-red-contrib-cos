@@ -1,0 +1,41 @@
+{
+  "name": "node-red-contrib-cos",
+  "version": "0.0.1",
+  "description": "Node-Red Nodes for IBM Cloud Object Storage service.",
+  "main": "cos.js",
+  "repository": {
+    "type": "git",
+    "url": "git@github.com:O-Hahn/node-red-contrib-cos"
+  },
+  "keywords": [
+    "ibm",
+    "node-red",
+    "bluemix",
+    "ibm-cloud",
+    "object",
+    "storage",
+    "s3",
+    "object storage"
+  ],
+  "author": {
+    "name": "Olaf Hahn",
+    "email": "olaf@fam-hahn.com"
+  },
+  "license": "Apache-2.0",
+  "node-red": {
+    "nodes": {
+      "cos": "cos.js"
+    }
+  },
+  "bugs": {
+    "url": "https://github.com/O-Hahn/node-red-contrib-cos/issues"
+  },
+  "dependencies": {
+    "es6-error": "latest",
+    "fs": "latest",
+    "fs-extra": "latest",
+    "ibm-cos-sdk": "latest",
+    "is-utf8": "latest",
+    "node-uuid": "latest"
+  }
+}
