@@ -1,6 +1,6 @@
 # node-red-contrib-cos
 
-A <a href="http://nodered.org" target="_new">Node-RED</a> node to store, delete and restore objects from the
+A <a href="http://nodered.org" target="_new">Node-RED</a> node to store, delete, restore and query objects from the
 <a href="https://console.bluemix.net/docs/services/cloud-object-storage/about-cos.html#about-ibm-cloud-object-storage" target="_new">IBM Cloud Object Storage</a> service. This service is a S3 like object storage hosted on the <a href="https://console.bluemix.net" target="_new">IBM Cloud</a>. 
 
 ## Install
@@ -21,12 +21,16 @@ The Bucket in the IBM Cloud Object Storage service must exist. When an URL to th
 
 ### COS Object Put
 
-Saves the given object to the IBM Cloud Object Storage service into the given bucket.
+Saves the given object or the given file to the IBM Cloud Object Storage service into the given bucket.
 
 ### COS Object Get
 
 Restores the object from the IBM Cloud Object Storage service as a payload or a local file.
 
-### COS Object Delete
+### COS Object Del
 
-Deletes the given object of the given container from the IBM Object Storage Service.
+Deletes the object out of the given bucket from the IBM Cloud Object Storage Service.
+
+### COS Object Qry
+
+List the objects of the given bucket from the IBM Cloud Object Storage Service.

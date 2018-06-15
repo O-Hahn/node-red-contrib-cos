@@ -727,9 +727,21 @@ module.exports = function(RED) {
 				} 
 
 				// store feedback values
-				msg.objectname = objectname;
+				var num = data.Contents.length;
+				var retarr = new Array();
+				var x;
 
-				msg.payload = data;
+				for (x in data.Contents) {
+					var elem = {
+						Key: data.Contents[x].Key,
+						Size: data.Contents[x].Size
+					}
+					retarr.push(elem);
+				}
+
+				// store feedback values
+				msg.found = num;
+				msg.payload = retarr;
 	
 				console.log('Cloud Object Storage Del (log): object deleted',objectname);
 		
