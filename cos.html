@@ -27,27 +27,27 @@
         <input type="text" id="node-input-bucket" placeholder="Bucket">
     </div>
     <div id="objectname" class="form-row">
-        <label for="node-input-objectname"><i class="fa fa-fileo"></i> Object Name</label>
+        <label for="node-input-objectname"><i class="fa fa-file-o"></i> Object Name</label>
         <input type="text" id="node-input-objectname" placeholder="Name of the Object in the Store">
     </div>
     <div id="mode" class="form-row">
-        <label for="node-input-mode"><i class="fa fa-fileo"></i> Mode</label>
+        <label for="node-input-mode"><i class="fa fa-cog"></i> Mode</label>
         <select id="node-input-mode">
             <option value="0">Filebased</option>
             <option value="1">Buffer</option>
         </select>
     </div>
     <div id="filename" class="form-row">
-        <label for="node-input-filename"><i class="fa fa-fileo"></i> Filename</label>
+        <label for="node-input-filename"><i class="fa fa-file-o"></i> Filename</label>
         <input type="text" id="node-input-filename" placeholder="Filename with extension">
     </div>
     <div id="filepath" class="form-row">
-        <label for="node-input-filepath"><i class="fa fa-fileo"></i> Filepath</label>
+        <label for="node-input-filepath"><i class="fa fa-folder-open-o"></i> Filepath</label>
         <input type="text" id="node-input-filepath" placeholder="Path to File">
     </div>
-    <div id="url" class="form-row">
-        <label for="node-input-url"><i class="fa fa-fileo"></i> Get the Url</label>
-        <input type="checkbox" style="width: 15px" id="node-input-url">
+    <div id="geturl" class="form-row">
+        <label for="node-input-geturl"><i class="fa fa-link"></i> Get the Url</label>
+        <input type="checkbox" style="width: 15px" id="node-input-geturl">
     </div>
 
     <br/>
@@ -60,11 +60,65 @@
 
 <!-- Next, some simple help text is provided for the node.                   -->
 <script type="text/x-red" data-help-name="cos-get">
-	<p>This <b>Cloud Object Storage Get Node</b> gets the object from the Cloud Object Storage Service (S3) on IBM Cloud. </p>
-	<p>Provide in <b>msg.objectname</b> the unique name of the stored file in the Cloud Object Storage Service and in <b>msg.bucket</b> the bucket in which it will resides in.</p>
-	<p>The <b>msg.mode</b> indicates to store the file in the <b>msg.payload</b> (mode=0) or into the given filename and path (mode=1). </p>
-	<p>You can override the node-defaults by giving <b>msg.filename</b> and <b>msg.filepath</b> with the necessary informations.</p>
-	<p>The node returns <b>msg.payload</b> and the <b>msg.objectname</b> name of the object or <b>msg.error</b> with the errorcode. </p>
+	<p>This <code>Cloud Object Storage Get Node</code> gets an object from the IBM Cloud Object Storage Service (S3). </p>
+
+    <h3>Inputs</h3>
+    <dl class="message-properties">
+        <dt>payload
+            <span class="property-type">string | buffer</span>
+        </dt>
+        <dd> the payload of the message to trigger the get. </dd>
+
+        <dt class="optional">bucket <span class="property-type">string</span></dt>
+        <dd> the bucket in which the object will resides in.</dd>
+
+        <dt class="optional">objectname <span class="property-type">string</span></dt>
+        <dd> the unique name of the stored file in the Cloud Object Storage Service.</dd>
+ 
+        <dt class="optional">mode <span class="property-type">string</span></dt>
+        <dd> indicates where to store the object. Mode could be 0 or 1.</dd>
+
+        <dt class="optional">filename <span class="property-type">string</span></dt>
+        <dd> to override the filename.</dd>
+
+        <dt class="optional">filepath <span class="property-type">string</span></dt>
+        <dd> to override the filepath.</dd>
+
+        <dt class="optional">geturl <span class="property-type">boolean</span></dt>
+        <dd>if you want to get the URL to the object set it to <code>true</code>.</dd>
+
+    </dl>
+
+    <h3>Outputs</h3>
+    <ol class="node-ports">
+        <li>Standard output
+            <dl class="message-properties">
+                <dt>payload <span class="property-type">string</span></dt>
+                <dd>The node returns <code>msg.payload</code> the object or in the <code>filename</code> when file-mode is used.</dd>
+            </dl>
+            <dl class="message-properties">
+                <dt>objectname <span class="property-type">string</span></dt>
+                <dd>The <code>msg.objectname</code> name of the object.</dd>
+            </dl>
+            <dl class="message-properties">
+                <dt>url <span class="property-type">string</span></dt>
+                <dd>If <code>msg.geturl</code> is set, <code>msg.url</code> will contain the WebLink URL to the object.</dd>
+            </dl>
+        </li>
+        <li>Standard error
+            <dl class="message-properties">
+                <dt>error <span class="property-type">string</span></dt>
+                <dd>or <code>msg.error</code> with the errorcode.</dd>
+            </dl>
+        </li>
+    </ol>
+
+    <h3>Details</h3>
+
+    <p>The <code>msg.objectname</code> must be an existing and unique name of the stored object in the IBM Cloud Object Storage Service </p>
+    <p>If you want to have a URL to the object generated HMAC must be enabeled and the keys given. </p>
+    <p>This Node uses the S3-API function of the IBM Cloud Object Storage Service. </p>
+
 </script>
 
 <script type="text/javascript">
@@ -77,7 +131,7 @@
             mode: {value:"0", required:true},
             filepath: {value:"", required:false},
             filename: {value:"", required:false},
-            url: {value:false, required:true},
+            geturl: {value:false, required:false},
             cosconfig: {value:"", type:"cos-config", required:true}
         },
         inputs:1,               
@@ -119,18 +173,18 @@
         <input type="text" id="node-input-bucket" placeholder="Bucket">
     </div>
     <div id="mode" class="form-row">
-        <label for="node-input-mode"><i class="fa fa-fileo"></i> Mode</label>
+        <label for="node-input-mode"><i class="fa fa-file-o"></i> Mode</label>
         <select id="node-input-mode">
             <option value="0">Filebased</option>
             <option value="1">Buffer</option>
         </select>
     </div>
     <div id="filename" class="form-row">
-        <label for="node-input-filename"><i class="fa fa-fileo"></i> Filename</label>
+        <label for="node-input-filename"><i class="fa fa-file-o"></i> Filename</label>
         <input type="text" id="node-input-filename" placeholder="Filename with extension">
     </div>
     <div id="filepath" class="form-row">
-        <label for="node-input-filepath"><i class="fa fa-fileo"></i> Filepath</label>
+        <label for="node-input-filepath"><i class="fa fa-folder-open-o"></i> Filepath</label>
         <input type="text" id="node-input-filepath" placeholder="Path to File">
     </div>
     <div id="contentType" class="form-row">
@@ -156,8 +210,12 @@
         </select>
     </div>
     <div id="objectname" class="form-row">
-        <label for="node-input-objectname"><i class="fa fa-fileo"></i> Object Name</label>
+        <label for="node-input-objectname"><i class="fa fa-file-o"></i> Object Name</label>
         <input type="text" id="node-input-objectname" placeholder="Name of the Object in the Store">
+    </div>
+    <div id="geturl" class="form-row">
+        <label for="node-input-geturl"><i class="fa fa-link"></i> Get the Url</label>
+        <input type="checkbox" style="width: 15px" id="node-input-geturl">
     </div>
 
     <br/>
@@ -170,10 +228,68 @@
 
 <!-- Next, some simple help text is provided for the node.                   -->
 <script type="text/x-red" data-help-name="cos-put">
-	<p>This <b>Cloud Object Storage Put Node</b> sends the image to the Cloud Object Storage Service (S3) on IBM Cloud. </p>
-	<p>The <b>msg.mode</b> indicates if the <b>msg.payload</b> contains the raw file or only the trigger for the object in the file system </p>
-	<p>You can override the node-defaults by giving <b>msg.filename</b>, <b>msg.filepath</b> and <b>msg.fileformat</b> with the necessary information.</p>
-	<p>The node returns <b>msg.payload</b> and the <b>msg.objectname</b> name of the object or <b>msg.error</b> with the errorcode. </p>
+
+	<p>This <code>Cloud Object Storage Put Node</code> sends the object to the IBM Cloud Object Storage Service (S3) on IBM Cloud. </p>
+
+    <h3>Inputs</h3>
+    <dl class="message-properties">
+        <dt>payload
+            <span class="property-type">string | buffer</span>
+        </dt>
+        <dd> the payload of the message to trigger the put. </dd>
+
+        <dt class="optional">bucket <span class="property-type">string</span></dt>
+        <dd> the existing bucket in which the object will be stored.</dd>
+
+        <dt class="optional">objectname <span class="property-type">string</span></dt>
+        <dd> the unique name of the stored file in the Cloud Object Storage Service.</dd>
+ 
+        <dt class="optional">mode <span class="property-type">string</span></dt>
+        <dd> indicates where to load the object from. Mode could be 0 or 1.</dd>
+
+        <dt class="optional">filename <span class="property-type">string</span></dt>
+        <dd> to override the filename.</dd>
+
+        <dt class="optional">filepath <span class="property-type">string</span></dt>
+        <dd> to override the filepath.</dd>
+
+        <dt class="optional">geturl <span class="property-type">boolean</span></dt>
+        <dd>if you want to get the URL to the object set it to <code>true</code>.</dd>
+
+    </dl>
+
+    <h3>Outputs</h3>
+    <ol class="node-ports">
+        <li>Standard output
+            <dl class="message-properties">
+                <dt>payload <span class="property-type">string</span></dt>
+                <dd>The node returns <code>msg.payload</code> the object or in the <code>filename</code> when file-mode is used.</dd>
+            </dl>
+            <dl class="message-properties">
+                <dt>objectname <span class="property-type">string</span></dt>
+                <dd>The <code>msg.objectname</code> name of the object.</dd>
+            </dl>
+            <dl class="message-properties">
+                <dt>url <span class="property-type">string</span></dt>
+                <dd>If <code>msg.geturl</code> is set, <code>msg.url</code> will contain the WebLink URL to the object.</dd>
+            </dl>
+        </li>
+        <li>Standard error
+            <dl class="message-properties">
+                <dt>error <span class="property-type">string</span></dt>
+                <dd>with the errorcode.</dd>
+            </dl>
+        </li>
+    </ol>
+
+    <h3>Details</h3>
+
+	<p>The <code>msg.mode</code> indicates if the <code>msg.payload</code> contains the raw file or only the trigger for the object in the file system </p>
+	<p>You can override the node-defaults by giving <code>msg.filename</code>, <code>msg.filepath</code> and <code>msg.fileformat</code> with the necessary information.</p>
+	<p>The node returns <code>msg.payload</code> and the <code>msg.objectname</code> name of the object or <code>msg.error</code> with the errorcode. </p>
+    <p>If you want to have a URL to the object generated HMAC must be enabeled and the keys given. </p>
+    <p>This Node uses the S3-API function of the IBM Cloud Object Storage Service. </p>
+
 </script>
 
 <script type="text/javascript">
@@ -187,6 +303,7 @@
             filepath: {value:"", required:false},
             filename: {value:"", required:true},
             contentType: {value:"", required:true},
+            geturl: {value:false, required:false},
             cosconfig: {value:"", type:"cos-config", required:true}
         },
         inputs:1,               
@@ -241,8 +358,31 @@
 
 <!-- Next, some simple help text is provided for the node.                   -->
 <script type="text/x-red" data-help-name="cos-del">
-	<p>This <b>Cloud Object Storage Delete Node</b> deletes the object from the Cloud Object Storage Service on IBM Cloud. </p>
-	<p>Provide in <b>msg.objectname</b> the name of the stored object in the Cloud Object Storage Service. </p>
+
+    <p>This <code>Cloud Object Storage Del Node</code> deletes the object to the IBM Cloud Object Storage Service (S3) on IBM Cloud. </p>
+
+    <h3>Inputs</h3>
+    <dl class="message-properties">
+        <dt>payload
+            <span class="property-type">string | buffer</span>
+        </dt>
+        <dd> the payload of the message to trigger the put. </dd>
+
+        <dt class="optional">bucket <span class="property-type">string</span></dt>
+        <dd> the existing bucket in which the object will be stored.</dd>
+
+        <dt class="optional">objectname <span class="property-type">string</span></dt>
+        <dd> the unique name of the stored file in the Cloud Object Storage Service.</dd>
+ 
+    </dl>
+
+    <h3>Details</h3>
+
+	<p>The <code>msg.mode</code> indicates if the <code>msg.payload</code> contains the raw file or only the trigger for the object in the file system </p>
+	<p>You can override the node-defaults by giving <code>msg.filename</code>, <code>msg.filepath</code> and <code>msg.fileformat</code> with the necessary information.</p>
+	<p>The node returns <code>msg.payload</code> and the <code>msg.objectname</code> name of the object or <code>msg.error</code> with the errorcode. </p>
+    <p>If you want to have a URL to the object generated HMAC must be enabeled and the keys given. </p>
+    <p>This Node uses the S3-API function of the IBM Cloud Object Storage Service. </p>
 </script>
 
 <script type="text/javascript">
@@ -269,18 +409,88 @@
 <!--  Cloud Object Storage Del Node   -->
 
 
+<!--  Cloud Object Storage Query Node   -->
+<script type="text/x-red" data-template-name="cos-qry">
+    <div class="form-row">
+        <label for="node-input-cosconfig"><i class="fa fa-tasks"></i> Cloud Object Storage Service</label>
+        <input type="text" id="node-input-cosconfig">
+    </div>
+    <div class="form-row">
+        <label for="node-input-bucket"><i class="fa fa-folder-open-o"></i> Bucket</label>
+        <input type="text" id="node-input-bucket" placeholder="Bucket">
+    </div>
+    <div id="maxkeys" class="form-row">
+        <label for="node-input-maxkeys"><i class="fa fa-cog"></i> Max Number returned</label>
+        <input type="number" min="1" max="100" value="50" style="width: 150px" id="node-input-maxkeys">
+    </div>
+
+    <br/>
+    <div class="form-row">
+        <label for="node-input-name"><i class="fa fa-tag"></i> Name</label>
+        <input type="text" id="node-input-name" placeholder="Name">
+    </div>
+</script>
+
+
+<!-- Next, some simple help text is provided for the node.                   -->
+<script type="text/x-red" data-help-name="cos-qry">
+
+    <p>This <code>Cloud Object Storage Qry Node</code> deletes the object to the IBM Cloud Object Storage Service (S3) on IBM Cloud. </p>
+
+    <h3>Inputs</h3>
+    <dl class="message-properties">
+        <dt>payload
+            <span class="property-type">string | buffer</span>
+        </dt>
+        <dd> the payload of the message to trigger the query. </dd>
+
+        <dt>bucket <span class="property-type">string</span></dt>
+        <dd> the existing bucket where all objects will be listed.</dd>
+ 
+    </dl>
+
+    <h3>Details</h3>
+
+	<p>The node returns <code>msg.payload</code> and the <code>msg.objectname</code> name of the object or <code>msg.error</code> with the errorcode. </p>
+    <p>This Node uses the S3-API function of the IBM Cloud Object Storage Service. </p>
+</script>
+
+<script type="text/javascript">
+    RED.nodes.registerType('cos-qry',{
+        category: 'storage',     
+        defaults: {             
+            name: {value:""},
+            bucket: {value:"", required:true},
+            maxkeys: {value:50, required:true},
+            cosconfig: {value:"", type:"cos-config", required:true}
+        },
+        inputs:1,               
+        outputs:1, 
+        icon: "cloud1_20x20.png",
+        color: "#A6BBCF",
+		label: function() {   
+            return this.name || "cloud object storage qry";
+        },
+        labelStyle: function() {
+            return this.name?"node_label_italic":"";
+        }
+    });
+</script>
+<!--  Cloud Object Storage Qry Node   -->
+
+
 <!--  Cloud Object Storage Config Node -->
 <script type="text/x-red" data-template-name="cos-config">
     <div id="apiKeyId" class="form-row">
-        <label for="node-config-input-apiKeyId"><i class="fa fa-user-cog"></i> apiKeyId</label>
+        <label for="node-config-input-apiKeyId"><i class="fa fa-user"></i> apiKeyId</label>
         <input type="text" id="node-config-input-apiKeyId" placeholder="apiKeyId">
     </div>
     <div id="ibmAuthEndpoint" class="form-row">
-        <label for="node-config-input-ibmAuthEndpoint"><i class="fa fa-user-cog"></i> ibmAuthEndpoint</label>
+        <label for="node-config-input-ibmAuthEndpoint"><i class="fa fa-link"></i> IBM Authentification Endpoint</label>
         <input type="text" id="node-config-input-ibmAuthEndpoint" placeholder="ibmAuthEndpoint">
     </div>
     <div id="serviceInstanceId" class="form-row">
-        <label for="node-config-input-serviceInstanceId"><i class="fa fa-user-cog"></i> serviceInstanceId</label>
+        <label for="node-config-input-serviceInstanceId"><i class="fa fa-user-cog"></i> Service Instance Id</label>
         <input type="text" id="node-config-input-serviceInstanceId" placeholder="serviceInstanceId">
     </div>
     <div id="location" class="form-row">
@@ -301,9 +511,22 @@
             </select>
     </div>
     <div id="endpoint" class="form-row">
-        <label for="node-config-input-endpoint"><i class="fa fa-cog"></i> endpoint</label>
+        <label for="node-config-input-endpoint"><i class="fa fa-link"></i> endpoint</label>
         <input type="text" id="node-config-input-endpoint" placeholder="endpoint">
     </div>
+    <div id="hmac" class="form-row">
+        <label for="node-config-input-hmac"><i class="fa fa-cog"></i> Use HMAC Credentials</label>
+        <input type="checkbox" style="width: 15px" id="node-config-input-hmac">
+    </div>
+    <div id="accesskeyid" class="form-row">
+        <label for="node-config-input-accesskeyid"><i class="fa fa-user-secret"></i> Access Key Id</label>
+        <input type="text" id="node-config-input-accesskeyid" placeholder="accesskeyid">
+    </div>
+    <div id="accesskey" class="form-row">
+        <label for="node-config-input-accesskey"><i class="fa fa-user-secret"></i> Access Key</label>
+        <input type="text" id="node-config-input-accesskey" placeholder="accesskey">
+    </div>
+
     
     <br/>
     <div class="form-row">
@@ -321,13 +544,35 @@
             ibmAuthEndpoint: {value:"https://iam.ng.bluemix.net/oidc/token",required:true},
             endpoint: {value:"",required:true},
             serviceInstanceId: {value:"",required:true},
+            hmac: {value:false, required: true},
+            accesskeyid: {value:"", required: false},
+            accesskey: {value:"", required: false},
             name: {value:"",required:true}
         },
         oneditprepare: function() {
+            
+            $("#node-config-input-hmac").change(function() {
+                console.log("HMAC:" + $("#node-config-input-hmac").is(":checked"));
+
+            if ($("#node-config-input-hmac").is(":checked")) {
+                $("#accesskeyid").show();
+                $("#accesskey").show();
+            } else {
+                $("#accesskeyid").hide();
+                $("#accesskey").hide();
+            }
+           });
+
             $("#node-config-input-location").change(function() {
  
                 var choose = $("#node-config-input-location").val();
                 console.log(choose);
+
+                if (choose == "manual") {
+                	$("#endpoint").show();
+                } else {
+                	$("#endpoint").hide();
+                }
 
                 switch (choose ) {
                     case "us-geo":

@@ -1,14 +1,12 @@
 {
-	"objstore": {
+	"cos": {
 		"label": {
 			"config": "Object Storage Config",
 			"objstore": "Object Store",
-			"dallas": "Dallas",
-			"london": "London",
 			"filename": "File Name",
 			"filedefpath": "File default path",
 			"filepath": "File Path",
-			"filemode":"File Mode",
+			"mode":" Mode",
 			"fileformat": "File Format",
 			"object": "Object",
 			"filefqn" : "File Qualified Path and Name",
