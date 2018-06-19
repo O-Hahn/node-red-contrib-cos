@@ -15,13 +15,14 @@ This node was tested under Nodejs V8.x LTS and NPM 5.x on NodeRed 0.18.
 ## Usage
 -----
 
-Provides a few nodes to easily manage objects within buckets of an instantce of the IBM Object Storage Dervice. This node uses the S3-API to communication with the instance. To use this nodes you must specify the credentials out of the IBM Cloud Object Storage service. 
+Provides a few nodes to easily manage objects within buckets of an instantce of the IBM Object Storage Service. This node uses the S3-API to communicate with the instance. 
+In order to use this nodes, you must specify the credentials from the IBM Cloud Object Storage service. 
 
-The Bucket in the IBM Cloud Object Storage service must exist. When an URL to the object is needed, use HMAC credentials within the config to provide a 15 minute accessable signed URL to the Object. See <a href="https://console.bluemix.net/docs/services/cloud-object-storage/hmac/credentials.html#using-hmac-credentials" target="_new">IBM Cloud Object Storage - Using HMAC credentials</a> .
+The bucket in the IBM Cloud Object Storage service must exist. When an URL to the object is needed, use HMAC credentials within the config to provide a 15 minute accessable signed URL to the object. See <a href="https://console.bluemix.net/docs/services/cloud-object-storage/hmac/credentials.html#using-hmac-credentials" target="_new">IBM Cloud Object Storage - Using HMAC credentials</a> for more details.
 
 ### COS Object Put
 
-Saves the given object or the given file to the IBM Cloud Object Storage service into the given bucket.
+Saves the given object (from a file or from the provided buffer) to the IBM Cloud Object Storage service into the given bucket.
 
 ### COS Object Get
 
@@ -29,8 +30,8 @@ Restores the object from the IBM Cloud Object Storage service as a payload or a 
 
 ### COS Object Del
 
-Deletes the object out of the given bucket from the IBM Cloud Object Storage Service.
+Deletes the object from the given bucket of the IBM Cloud Object Storage Service.
 
 ### COS Object Qry
 
-List the objects of the given bucket from the IBM Cloud Object Storage Service.
+List all of the objects of a given bucket from the IBM Cloud Object Storage Service as an array of objects.

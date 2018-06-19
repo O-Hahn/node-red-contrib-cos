@@ -45,11 +45,12 @@ module.exports = function(RED) {
         // Check if the Config to the Service is given 
         if (this.cosconfig) {
             // Do something with:
-         	node.status({fill:"blue",shape:"ring",text:"cos initializing"});
+         	node.status({fill:"blue",shape:"ring",text:"cos.status.initializing"});
         } else {
-            // No config node configured
-	        node.status({fill:"red",shape:"ring",text:"cos-configiguration missing"});
-	        node.warn('Cloud Object Storage Get: No object storage service configuration found!');
+			// No config node configured
+			node.warn(RED._("cos.warn.missing-credentials"));
+	        node.status({fill:"red",shape:"ring",text:"cos.status.missing-credentials"});
+	        // node.warn('Cloud Object Storage Get: No object storage service configuration found!');
 	        return;
         }
 
@@ -76,7 +77,7 @@ module.exports = function(RED) {
 	        console.log('Cloud Object Storage Get (log): Init done');
 
 	        // Set the status to green
-         	node.status({fill:"green",shape:"ring",text:"cos connected"});
+			node.status({fill:"green",shape:"ring",text:"cos.status.connected"});
          	
          	// Check ObjectName 
          	if ((msg.objectname) && (msg.objectname.trim() !== "")) {
@@ -166,19 +167,16 @@ module.exports = function(RED) {
 			// Create Access Instance 
 			var cos = new ibmcos.S3(config);
 
-			//console.log("Connection Object:"+config.endpoint+"---"+bucket+"---"+objectname);
-
 			// Get the Object from the Cloud Object Storage 			
-			node.status({fill:"green",shape:"dot",text:"cos downloading"});
+			node.status({fill:"green",shape:"dot",text:"cos.status.downloading"});
 			cos.getObject({
                 Bucket: bucket,
                 Key: objectname
             }, function(err, data) {
                 if (err) {
 					// Send error back 
-					node.status({fill:"yellow",shape:"dot",text:"cos download failed"});
-					node.warn(err);
-					node.error('Cloud Object Storage Get (err): Download failed: ', err);
+					node.status({fill:"red",shape:"ring",text:"cos.status.failed"});
+					node.error(RED._("cos.error.failed-to-fetch", {err:err}));
 					return;
 				} 
 				 
@@ -218,9 +216,8 @@ module.exports = function(RED) {
 					}, function (err, url) {
 						if (err) {
 							// Send error back 
-							node.status({fill:"yellow",shape:"dot",text:"cos download failed"});
-							node.warn(err);
-							node.error('Cloud Object Storage Get (err): Download failed: ');
+							node.status({fill:"yellow",shape:"ring",text:"cos.status.url-gen-failed"});
+							node.error(RED._("cos.error.url-gen-failed", {err:err}));
 							return;
 						} 
 
@@ -231,21 +228,23 @@ module.exports = function(RED) {
 				}
 					
 				// Set the node-status
-				node.status({fill:"green",shape:"ring",text:"cos ready"});
+				node.status({fill:"green",shape:"ring",text:"cos.status.ready"});
 
 				// Send the output back 
 				node.send(msg);	
             });
 		});
-        // respond to close....
-        this.on("close", function() {
-            // Called when the node is shutdown - eg on redeploy.
-            // Allows ports to be closed, connections dropped etc.
-            // eg: node.client.disconnect();
 
-			// Set the node-status default
+		// respond to close....
+		this.on('close', function(removed, done) {
+			if (removed) {
+				// This node has been deleted
+			} else {
+				// This node is being restarted
+			}
 			node.status({});
-        });
+			done();
+		});
     }
     RED.nodes.registerType("cos-get",COSGetNode);
 
@@ -272,14 +271,14 @@ module.exports = function(RED) {
 
         // Check if the Config to the Service is given 
         if (this.cosconfig) {
-            // Do something with:
-         	node.status({fill:"blue",shape:"ring",text:"cos initializing"});
+            // Do something with the config
+         	node.status({fill:"blue",shape:"ring",text:"cos.status.initializing"});
         } else {
-            // No config node configured
-	        node.status({fill:"red",shape:"ring",text:"cos-configiguration missing"});
-	        node.warn('Cloud Object Storage Put: No object storage service configuration found!');
+			// No config node configured
+			node.warn(RED._("cos.warn.missing-credentials"));
+	        node.status({fill:"red",shape:"ring",text:"cos.status.missing-credentials"});
 	        return;
-		}
+        }
 		
         // respond to inputs....
         this.on('input', function (msg) {
@@ -304,7 +303,7 @@ module.exports = function(RED) {
 	        console.log('Cloud Object Storage Put (log): Init done');
 
 	        // Set the status to green
-         	node.status({fill:"green",shape:"ring",text:"cos connected"});
+			node.status({fill:"green",shape:"ring",text:"cos.status.connected"});
          	
 			// Check mode
          	if ((msg.mode) && (msg.mode.trim() !== "")) {
@@ -373,7 +372,7 @@ module.exports = function(RED) {
          		}
          	}
 
-			 // Check hmac 
+			 // Check hmac credentials if provided
 			var hmac = node.cosconfig.hmac;
 
          	if (hmac) {
@@ -410,7 +409,15 @@ module.exports = function(RED) {
 
          	// mode is buffermode or filebased - get the data into body
 			if (mode == "0") {
-	        	// Upload from File 
+				// Check if 
+				if (fs.existsSync(filefqn) === false) {
+					// File does not exists - send error 
+					node.status({fill:"red",shape:"ring",text:"cos.status.failed"});
+					node.error(RED._("cos.errors.file-not-found", {err:filefqn}));
+					return;
+				}
+
+				// Upload from File 
 		        var body = fs.createReadStream(filefqn);
 		        
 		        // get Filesize
@@ -423,8 +430,8 @@ module.exports = function(RED) {
 
 			console.log("URL: " + geturl + "HMAC: " + hmac);
 
-			// Put the Object toe the Cloud Object Storage 			
-			node.status({fill:"green",shape:"dot",text:"cos uploading"});
+			// Put the Object to the IBM Cloud Object Storage 			
+			node.status({fill:"green",shape:"dot",text:"cos.status.uploading"});
 			cos.putObject({
 				Bucket: bucket,
 				Body: body,
@@ -432,9 +439,8 @@ module.exports = function(RED) {
             }, function(err, data) {
                 if (err) {
 					// Send error back 
-					node.status({fill:"yellow",shape:"dot",text:"cos upload failed"});
-					node.warn(err);
-					node.error('Cloud Object Storage Put (err): Upload failed: ' + err.toString);
+					node.status({fill:"red",shape:"ring",text:"cos.status.failed"});
+					node.error(RED._("cos.error.upload-failed", {err:err}));
 					return;
                 }	
 				
@@ -453,9 +459,8 @@ module.exports = function(RED) {
 					}, function (err, url) {
 						if (err) {
 							// Send error back 
-							node.status({fill:"yellow",shape:"dot",text:"cos upload failed"});
-							node.warn(err);
-							node.error('Cloud Object Storage Put (err): Upload failed: ');
+							node.status({fill:"yellow",shape:"ring",text:"cos.status.url-gen-failed"});
+							node.error(RED._("cos.error.url-gen-failed", {err:err}));
 							return;
 						} 
 
@@ -464,9 +469,9 @@ module.exports = function(RED) {
 					});
 
 				}
-				 
+				 					
 				// Set the node-status
-				node.status({fill:"green",shape:"ring",text:"cos ready"});
+				node.status({fill:"green",shape:"ring",text:"cos.status.ready"});
 
 				// Send the output back 
 				node.send(msg);
@@ -474,14 +479,15 @@ module.exports = function(RED) {
 			
         });
 
-        // respond to close....
-        this.on("close", function() {
-            // Called when the node is shutdown - eg on redeploy.
-            // Allows ports to be closed, connections dropped etc.
-			// eg: node.client.disconnect();
-			
- 			// Set the node-status default
+		// respond to close....
+		this.on('close', function(removed, done) {
+			if (removed) {
+				// This node has been deleted
+			} else {
+				// This node is being restarted
+			}
 			node.status({});
+			done();
 		});
     }
     RED.nodes.registerType("cos-put",COSPutNode);
@@ -504,12 +510,12 @@ module.exports = function(RED) {
 
         // Check if the Config to the Service is given 
         if (this.cosconfig) {
-            // Do something with:
-         	node.status({fill:"blue",shape:"ring",text:"cos initializing"});
+            // Do something with the config
+         	node.status({fill:"blue",shape:"ring",text:"cos.status.initializing"});
         } else {
-            // No config node configured
-	        node.status({fill:"red",shape:"ring",text:"cos-configiguration missing"});
-	        node.warn('Cloud Object Storage Del: No object storage service configuration found!');
+			// No config node configured
+			node.warn(RED._("cos.warn.missing-credentials"));
+	        node.status({fill:"red",shape:"ring",text:"cos.status.missing-credentials"});
 	        return;
         }
 
@@ -525,7 +531,7 @@ module.exports = function(RED) {
 	        console.log('Cloud Object Storage Del (log): Init done');
 
 	        // Set the status to green
-         	node.status({fill:"green",shape:"ring",text:"cos connected"});
+			node.status({fill:"green",shape:"ring",text:"cos.status.connected"});
          	
 			// Check ObjectName
 			if ((msg.objectname) && (msg.objectname.trim() !== "")) {
@@ -577,42 +583,57 @@ module.exports = function(RED) {
 			// Create Access Instance 
 			var cos = new ibmcos.S3(config);
 
-			// Get the Object from the Cloud Object Storage 			
-			node.status({fill:"green",shape:"dot",text:"cos deleting"});
-			cos.deleteObject({
-                Bucket: bucket,
-                Key: objectname
-            }, function(err, data) {
+			// Delete the Object from the Cloud Object Storage 			
+			node.status({fill:"green",shape:"dot",text:"cos.status.deleting"});
+
+			// Check if object exists in the bucket
+			cos.headObject({
+				Bucket: bucket, 
+				Key: objectname
+			   }, function(err, data) {
                 if (err) {
 					// Send error back 
-					node.status({fill:"yellow",shape:"dot",text:"cos delete failed"});
-					node.warn(err);
-					node.error('Cloud Object Storage Del (err): Delete failed: ' + err.toString);
+					node.status({fill:"red",shape:"ring",text:"cos.status.failed"});
+					node.error(RED._("cos.errors.object-not-found", {err:err}));
 					return;
-				} 
+				} else {
+					// delete the object out of the bucket
+					cos.deleteObject({
+						Bucket: bucket,
+						Key: objectname
+					}, function(err, data) {
+						if (err) {
+							// Send error back 
+							node.status({fill:"red",shape:"ring",text:"cos.status.failed"});
+							node.error(RED._("cos.error.delete-failed", {err:err}));
+							return;
+						} 
 
-				// store feedback values
-				msg.objectname = objectname;
-	
-				console.log('Cloud Object Storage Del (log): object deleted',objectname);
-		
-				// Set the node-status
-				node.status({fill:"green",shape:"ring",text:"cos ready"});
+						// store feedback values
+						msg.objectname = objectname;
+			
+						console.log('Cloud Object Storage Del (log): object deleted',objectname);
+													
+						// Set the node-status
+						node.status({fill:"green",shape:"ring",text:"cos.status.ready"});
 
-				// Send the output back 
-				node.send(msg);
-            });
+						// Send the output back 
+						node.send(msg);
+					});
+				}
+			});
 		});
 
-        // respond to close....
-        this.on("close", function() {
-            // Called when the node is shutdown - eg on redeploy.
-            // Allows ports to be closed, connections dropped etc.
-            // eg: node.client.disconnect();
-
-			// Set the node-status default
+		// respond to close....
+		this.on('close', function(removed, done) {
+			if (removed) {
+				// This node has been deleted
+			} else {
+				// This node is being restarted
+			}
 			node.status({});
-        });
+			done();
+		});
     }
     RED.nodes.registerType("cos-del",COSDelNode);
 
@@ -636,12 +657,12 @@ module.exports = function(RED) {
 
         // Check if the Config to the Service is given 
         if (this.cosconfig) {
-            // Do something with:
-         	node.status({fill:"blue",shape:"ring",text:"cos initializing"});
+            // Do something with the config
+         	node.status({fill:"blue",shape:"ring",text:"cos.status.initializing"});
         } else {
-            // No config node configured
-	        node.status({fill:"red",shape:"ring",text:"cos-configiguration missing"});
-	        node.warn('Cloud Object Storage Qry: No object storage service configuration found!');
+			// No config node configured
+			node.warn(RED._("cos.warn.missing-credentials"));
+	        node.status({fill:"red",shape:"ring",text:"cos.status.missing-credentials"});
 	        return;
         }
 
@@ -658,7 +679,7 @@ module.exports = function(RED) {
 	        console.log('Cloud Object Storage Qry (log): Init done');
 
 	        // Set the status to green
-         	node.status({fill:"green",shape:"ring",text:"cos connected"});
+			node.status({fill:"green",shape:"ring",text:"cos.status.connected"});
          	
 			// Check ObjectName
 			if ((msg.objectname) && (msg.objectname.trim() !== "")) {
@@ -711,7 +732,7 @@ module.exports = function(RED) {
 			var cos = new ibmcos.S3(config);
 
 			// Get the Object from the Cloud Object Storage 			
-			node.status({fill:"green",shape:"dot",text:"cos deleting"});
+			node.status({fill:"green",shape:"dot",text:"cos.status.query"});
 
 			cos.listObjects({
                 Bucket: bucket,
@@ -720,9 +741,8 @@ module.exports = function(RED) {
             }, function(err, data) {
                 if (err) {
 					// Send error back 
-					node.status({fill:"yellow",shape:"dot",text:"cos delete failed"});
-					node.warn(err);
-					node.error('Cloud Object Storage Del (err): Delete failed: ' + err.toString);
+					node.status({fill:"red",shape:"ring",text:"cos.status.failed"});
+					node.error(RED._("cos.errors.object-not-found", {err:err}));
 					return;
 				} 
 
@@ -743,25 +763,26 @@ module.exports = function(RED) {
 				msg.found = num;
 				msg.payload = retarr;
 	
-				console.log('Cloud Object Storage Del (log): object deleted',objectname);
-		
+				console.log('Cloud Object Storage Qry (log): objects listed');
+															
 				// Set the node-status
-				node.status({fill:"green",shape:"ring",text:"cos ready"});
+				node.status({fill:"green",shape:"ring",text:"cos.status.ready"});
 
 				// Send the output back 
 				node.send(msg);
             });
 		});
-
-        // respond to close....
-        this.on("close", function() {
-            // Called when the node is shutdown - eg on redeploy.
-            // Allows ports to be closed, connections dropped etc.
-            // eg: node.client.disconnect();
-
-			// Set the node-status default
+ 
+		// respond to close....
+		this.on('close', function(removed, done) {
+			if (removed) {
+				// This node has been deleted
+			} else {
+				// This node is being restarted
+			}
 			node.status({});
-        });
+			done();
+		});
     }
     RED.nodes.registerType("cos-qry",COSQryNode);
 
@@ -783,7 +804,6 @@ module.exports = function(RED) {
 		this.accesskey = n.accesskey;
 		this.accesskeyid = n.accesskeyid;
 
-		// Endpoint Url must be generated --- missing
 		// Credentials as password fields --- missing 
 	}
 	RED.nodes.registerType("cos-config",COSConfigNode);

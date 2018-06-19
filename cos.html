@@ -19,41 +19,41 @@
 <!--  Object Storage Get Node   -->
 <script type="text/x-red" data-template-name="cos-get">
     <div class="form-row">
-        <label for="node-input-cosconfig"><i class="fa fa-tasks"></i> Cloud Object Storage Service</label>
+        <label for="node-input-cosconfig"><i class="fa fa-tasks"></i> <span data-i18n="cos.label.cosconfig"></span></label>
         <input type="text" id="node-input-cosconfig">
     </div>
     <div class="form-row">
-        <label for="node-input-bucket"><i class="fa fa-folder-open-o"></i> Bucket</label>
-        <input type="text" id="node-input-bucket" placeholder="Bucket">
+        <label for="node-input-bucket"><i class="fa fa-folder-open-o"></i> <span data-i18n="cos.label.bucket"></span></label>
+        <input type="text" id="node-input-bucket" data-i18n="[placeholder]cos.placeholder.bucket">
     </div>
     <div id="objectname" class="form-row">
-        <label for="node-input-objectname"><i class="fa fa-file-o"></i> Object Name</label>
-        <input type="text" id="node-input-objectname" placeholder="Name of the Object in the Store">
+        <label for="node-input-objectname"><i class="fa fa-file-o"></i> <span data-i18n="cos.label.objectname"></span></label>
+        <input type="text" id="node-input-objectname" data-i18n="[placeholder]cos.placeholder.objectname">
     </div>
     <div id="mode" class="form-row">
-        <label for="node-input-mode"><i class="fa fa-cog"></i> Mode</label>
+        <label for="node-input-mode"><i class="fa fa-cog"></i> <span data-i18n="cos.label.mode"></span></label>
         <select id="node-input-mode">
-            <option value="0">Filebased</option>
-            <option value="1">Buffer</option>
+            <option value="0" data-i18n="cos.options.filemode"></option>
+            <option value="1" data-i18n="cos.options.buffermode"></option>
         </select>
     </div>
     <div id="filename" class="form-row">
-        <label for="node-input-filename"><i class="fa fa-file-o"></i> Filename</label>
-        <input type="text" id="node-input-filename" placeholder="Filename with extension">
+        <label for="node-input-filename"><i class="fa fa-file-o"></i> <span data-i18n="cos.label.filename"></span></label>
+        <input type="text" id="node-input-filename" data-i18n="[placeholder]cos.placeholder.filename">
     </div>
     <div id="filepath" class="form-row">
-        <label for="node-input-filepath"><i class="fa fa-folder-open-o"></i> Filepath</label>
-        <input type="text" id="node-input-filepath" placeholder="Path to File">
+        <label for="node-input-filepath"><i class="fa fa-folder-open-o"></i> <span data-i18n="cos.label.filepath"></span></label>
+        <input type="text" id="node-input-filepath" data-i18n="[placeholder]cos.placeholder.filepath">
     </div>
     <div id="geturl" class="form-row">
-        <label for="node-input-geturl"><i class="fa fa-link"></i> Get the Url</label>
+        <label for="node-input-geturl"><i class="fa fa-link"></i> <span data-i18n="cos.label.geturl"></span></label>
         <input type="checkbox" style="width: 15px" id="node-input-geturl">
     </div>
 
     <br/>
     <div class="form-row">
-        <label for="node-input-name"><i class="fa fa-tag"></i> Name</label>
-        <input type="text" id="node-input-name" placeholder="Name">
+        <label for="node-input-name"><i class="fa fa-tag"></i> <span data-i18n="cos.label.name"></span></label>
+        <input type="text" id="node-input-name" data-i18n="[placeholder]cos.placeholder.name">
     </div>
 </script>
 
@@ -165,63 +165,63 @@
 <!--  Cloud Object Storage Put Node   -->
 <script type="text/x-red" data-template-name="cos-put">
     <div class="form-row">
-        <label for="node-input-cosconfig"><i class="fa fa-tasks"></i> Cloud Object Storage Service</label>
+        <label for="node-input-cosconfig"><i class="fa fa-tasks"></i> <span data-i18n="cos.label.cosconfig"></span></label>
         <input type="text" id="node-input-cosconfig">
     </div>
     <div class="form-row">
-        <label for="node-input-bucket"><i class="fa fa-folder-open-o"></i> Bucket</label>
-        <input type="text" id="node-input-bucket" placeholder="Bucket">
+        <label for="node-input-bucket"><i class="fa fa-folder-open-o"></i> <span data-i18n="cos.label.bucket"></span></label>
+        <input type="text" id="node-input-bucket" data-i18n="[placeholder]cos.placeholder.bucket">
     </div>
     <div id="mode" class="form-row">
-        <label for="node-input-mode"><i class="fa fa-file-o"></i> Mode</label>
+        <label for="node-input-mode"><i class="fa fa-file-o"></i> <span data-i18n="cos.label.mode"></span></label>
         <select id="node-input-mode">
-            <option value="0">Filebased</option>
-            <option value="1">Buffer</option>
+            <option value="0" data-i18n="cos.options.filemode"></option>
+            <option value="1" data-i18n="cos.options.buffermode"></option>
         </select>
     </div>
     <div id="filename" class="form-row">
-        <label for="node-input-filename"><i class="fa fa-file-o"></i> Filename</label>
-        <input type="text" id="node-input-filename" placeholder="Filename with extension">
+        <label for="node-input-filename"><i class="fa fa-file-o"></i> <span data-i18n="cos.label.filename"></span></label>
+        <input type="text" id="node-input-filename" data-i18n="[placeholder]cos.placeholder.filename">
     </div>
     <div id="filepath" class="form-row">
-        <label for="node-input-filepath"><i class="fa fa-folder-open-o"></i> Filepath</label>
-        <input type="text" id="node-input-filepath" placeholder="Path to File">
+        <label for="node-input-filepath"><i class="fa fa-folder-open-o"></i> <span data-i18n="cos.label.filepath"></span></label>
+        <input type="text" id="node-input-filepath" data-i18n="[placeholder]cos.placeholder.filepath">
     </div>
     <div id="contentType" class="form-row">
-        <label for="node-input-contentType"><i class="fa fa-tag"></i> ContentType</label>
+        <label for="node-input-contentType"><i class="fa fa-tag"></i> <span data-i18n="cos.label.contentType"></span></label>
         <select type="text" id="node-input-contentType">
-            <option selected value="">Select</option>
-            <option value="image/jpeg">image/jpeg</option>
-            <option value="image/png">image/png</option>
-            <option value="image/gif">image/gif</option>
-            <option value="video/mpeg">video/mpeg</option>
-            <option value="text/comma-separated-values">text/comma-separated-values</option>
-            <option value="text/plain">text/plain</option>	
-            <option value="text/rtf">text/rtf</option>	
-            <option value="audio/x-wav">audio/x-wav</option>
-            <option value="audio/x-mpeg">audio/x-mpeg</option>
-            <option value="application/msexcel">application/msexcel</option>	
-            <option value="application/msword">application/msword</option>
-            <option value="application/mspowerpoint">application/mspowerpoint</option>	
-            <option value="application/json">application/json</option>
-            <option value="application/xml">application/xml</option>
-            <option value="application/javascript">application/javascript</option>
-            <option value="application/pdf">application/pdf</option>
+            <option selected value="" data-i18n="cos.options.select"></option>
+            <option value="image/jpeg" data-i18n="cos.options.image_jpeg"></option>
+            <option value="image/png" data-i18n="cos.options.image_png"></option>
+            <option value="image/gif" data-i18n="cos.options.image_gif"></option>
+            <option value="video/mpeg" data-i18n="cos.options.video_mpeg"></option>
+            <option value="text/comma-separated-values" data-i18n="cos.options.text_comma-separated-values"></option>
+            <option value="text/plain" data-i18n="cos.options.text_plain"></option>	
+            <option value="text/rtf" data-i18n="cos.options.text_rtf"></option>	
+            <option value="audio/x-wav" data-i18n="cos.options.audio_x-wav"></option>
+            <option value="audio/x-mpeg" data-i18n="cos.options.audio_x-mpeg"></option>
+            <option value="application/msexcel" data-i18n="cos.options.application_msexcel"></option>	
+            <option value="application/msword" data-i18n="cos.options.application_msword"></option>
+            <option value="application/mspowerpoint" data-i18n="cos.options.application_mspowerpoint"></option>	
+            <option value="application/json" data-i18n="cos.options.application_json"></option>
+            <option value="application/xml" data-i18n="cos.options.application_xml"></option>
+            <option value="application/javascript" data-i18n="cos.options.application_javascript"></option>
+            <option value="application/pdf" data-i18n="cos.options.application_pdf"></option>
         </select>
     </div>
     <div id="objectname" class="form-row">
-        <label for="node-input-objectname"><i class="fa fa-file-o"></i> Object Name</label>
-        <input type="text" id="node-input-objectname" placeholder="Name of the Object in the Store">
+        <label for="node-input-objectname"><i class="fa fa-file-o"></i> <span data-i18n="cos.label.objectname"></span></label>
+        <input type="text" id="node-input-objectname" data-i18n="[placeholder]cos.placeholder.objectname">
     </div>
     <div id="geturl" class="form-row">
-        <label for="node-input-geturl"><i class="fa fa-link"></i> Get the Url</label>
+        <label for="node-input-geturl"><i class="fa fa-link"></i> <span data-i18n="cos.label.geturl"></span></label>
         <input type="checkbox" style="width: 15px" id="node-input-geturl">
     </div>
 
     <br/>
     <div class="form-row">
-        <label for="node-input-name"><i class="fa fa-tag"></i> Name</label>
-        <input type="text" id="node-input-name" placeholder="Name">
+        <label for="node-input-name"><i class="fa fa-tag"></i> <span data-i18n="cos.label.name"></span></label>
+        <input type="text" id="node-input-name" data-i18n="[placeholder]cos.placeholder.name">
     </div>
 </script>
 
@@ -336,22 +336,22 @@
 <!--  Cloud Object Storage Delete Node   -->
 <script type="text/x-red" data-template-name="cos-del">
     <div class="form-row">
-        <label for="node-input-cosconfig"><i class="fa fa-tasks"></i> Cloud Object Storage Service</label>
+        <label for="node-input-cosconfig"><i class="fa fa-tasks"></i> <span data-i18n="cos.label.cosconfig"></span></label>
         <input type="text" id="node-input-cosconfig">
     </div>
     <div class="form-row">
-        <label for="node-input-bucket"><i class="fa fa-folder-open-o"></i> Bucket</label>
-        <input type="text" id="node-input-bucket" placeholder="Bucket">
+        <label for="node-input-bucket"><i class="fa fa-folder-open-o"></i> <span data-i18n="cos.label.bucket"></span></label>
+        <input type="text" id="node-input-bucket" data-i18n="[placeholder]cos.placeholder.bucket">
     </div>
     <div id="objectname" class="form-row">
-        <label for="node-input-objectname"><i class="fa fa-fileo"></i> Object Name</label>
-        <input type="text" id="node-input-objectname" placeholder="Name of the Object in the Store">
+        <label for="node-input-objectname"><i class="fa fa-file-o"></i> <span data-i18n="cos.label.objectname"></span></label>
+        <input type="text" id="node-input-objectname" data-i18n="[placeholder]cos.placeholder.objectname">
     </div>
 
     <br/>
     <div class="form-row">
-        <label for="node-input-name"><i class="fa fa-tag"></i> Name</label>
-        <input type="text" id="node-input-name" placeholder="Name">
+        <label for="node-input-name"><i class="fa fa-tag"></i> <span data-i18n="cos.label.name"></span></label>
+        <input type="text" id="node-input-name" data-i18n="[placeholder]cos.placeholder.name">
     </div>
 </script>
 
@@ -412,22 +412,22 @@
 <!--  Cloud Object Storage Query Node   -->
 <script type="text/x-red" data-template-name="cos-qry">
     <div class="form-row">
-        <label for="node-input-cosconfig"><i class="fa fa-tasks"></i> Cloud Object Storage Service</label>
+        <label for="node-input-cosconfig"><i class="fa fa-tasks"></i> <span data-i18n="cos.label.cosconfig"></span></label>
         <input type="text" id="node-input-cosconfig">
     </div>
     <div class="form-row">
-        <label for="node-input-bucket"><i class="fa fa-folder-open-o"></i> Bucket</label>
-        <input type="text" id="node-input-bucket" placeholder="Bucket">
+        <label for="node-input-bucket"><i class="fa fa-folder-open-o"></i> <span data-i18n="cos.label.bucket"></span></label>
+        <input type="text" id="node-input-bucket" data-i18n="[placeholder]cos.placeholder.bucket">
     </div>
     <div id="maxkeys" class="form-row">
-        <label for="node-input-maxkeys"><i class="fa fa-cog"></i> Max Number returned</label>
+        <label for="node-input-maxkeys"><i class="fa fa-cog"></i> <span data-i18n="cos.label.maxkeys"></span></label>
         <input type="number" min="1" max="100" value="50" style="width: 150px" id="node-input-maxkeys">
     </div>
 
     <br/>
     <div class="form-row">
-        <label for="node-input-name"><i class="fa fa-tag"></i> Name</label>
-        <input type="text" id="node-input-name" placeholder="Name">
+        <label for="node-input-name"><i class="fa fa-tag"></i> <span data-i18n="cos.label.name"></span></label>
+        <input type="text" id="node-input-name" data-i18n="[placeholder]cos.placeholder.name">
     </div>
 </script>
 
@@ -482,49 +482,49 @@
 <!--  Cloud Object Storage Config Node -->
 <script type="text/x-red" data-template-name="cos-config">
     <div id="apiKeyId" class="form-row">
-        <label for="node-config-input-apiKeyId"><i class="fa fa-user"></i> apiKeyId</label>
-        <input type="text" id="node-config-input-apiKeyId" placeholder="apiKeyId">
+        <label for="node-config-input-apiKeyId"><i class="fa fa-user"></i> <span data-i18n="cos.label.appKeyId"></span></label>
+        <input type="text" id="node-config-input-apiKeyId"  data-i18n="[placeholder]cos.placeholder.appKeyId">
     </div>
     <div id="ibmAuthEndpoint" class="form-row">
-        <label for="node-config-input-ibmAuthEndpoint"><i class="fa fa-link"></i> IBM Authentification Endpoint</label>
-        <input type="text" id="node-config-input-ibmAuthEndpoint" placeholder="ibmAuthEndpoint">
+        <label for="node-config-input-ibmAuthEndpoint"><i class="fa fa-link"></i> <span data-i18n="cos.label.ibmAuthEndpoint"></span></label>
+        <input type="text" id="node-config-input-ibmAuthEndpoint" data-i18n="[placeholder]cos.placeholder.ibmAuthEndpoint">
     </div>
     <div id="serviceInstanceId" class="form-row">
-        <label for="node-config-input-serviceInstanceId"><i class="fa fa-user-cog"></i> Service Instance Id</label>
-        <input type="text" id="node-config-input-serviceInstanceId" placeholder="serviceInstanceId">
+        <label for="node-config-input-serviceInstanceId"><i class="fa fa-cog"></i> <span data-i18n="cos.label.serviceInstanceId"></span></label>
+        <input type="text" id="node-config-input-serviceInstanceId" data-i18n="[placeholder]cos.placeholder.serviceInstanceId">
     </div>
     <div id="location" class="form-row">
-            <label for="node-config-input-location"><i class="fa fa-globe"></i> Location</label>
+            <label for="node-config-input-location"><i class="fa fa-globe"></i> <span data-i18n="cos.label.location"></span></label>
             <select id="node-config-input-location">
-                <option selected value="">Select</option>
-                <option value="us-geo">US Cross Region</option>
-                <option value="eu-geo">EU Cross Region</option>
-                <option value="ap-geo">AP Cross Region</option>
-                <option value="us-south">US-South</option>
-                <option value="us-east">US-East</option>
-                <option value="eu-gb">EU-GB</option>
-                <option value="eu-de">EU-DE</option>
-                <option value="che01">Chennai, India</option>
-                <option value="mel01">Melbourne, Australia</option>
-                <option value="tor01">Toronto, Canada</option>
-                <option value="manual">Manual</option>            
+                <option selected value="" data-i18n="cos.options.select"></option>
+                <option value="us-geo" data-i18n="cos.locations.us-geo"></option>
+                <option value="eu-geo" data-i18n="cos.locations.eu-geo"></option>
+                <option value="ap-geo" data-i18n="cos.locations.ap-geo"></option>
+                <option value="us-south" data-i18n="cos.locations.us-south"></option>
+                <option value="us-east" data-i18n="cos.locations.us-east"></option>
+                <option value="eu-gb" data-i18n="cos.locations.eu-gb"></option>
+                <option value="eu-de" data-i18n="cos.locations.eu-de"></option>
+                <option value="che01" data-i18n="cos.locations.che01"></option>
+                <option value="mel01" data-i18n="cos.locations.mel01"></option>
+                <option value="tor01" data-i18n="cos.locations.tor01"></option>
+                <option value="manual" data-i18n="cos.locations.manual"></option>            
             </select>
     </div>
     <div id="endpoint" class="form-row">
-        <label for="node-config-input-endpoint"><i class="fa fa-link"></i> endpoint</label>
-        <input type="text" id="node-config-input-endpoint" placeholder="endpoint">
+        <label for="node-config-input-endpoint"><i class="fa fa-link"></i> <span data-i18n="cos.label.endpoint"></span></label>
+        <input type="text" id="node-config-input-endpoint" data-i18n="[placeholder]cos.placeholder.endpoint">
     </div>
     <div id="hmac" class="form-row">
-        <label for="node-config-input-hmac"><i class="fa fa-cog"></i> Use HMAC Credentials</label>
+        <label for="node-config-input-hmac"><i class="fa fa-cog"></i> <span data-i18n="cos.label.hmac"></span></label>
         <input type="checkbox" style="width: 15px" id="node-config-input-hmac">
     </div>
     <div id="accesskeyid" class="form-row">
-        <label for="node-config-input-accesskeyid"><i class="fa fa-user-secret"></i> Access Key Id</label>
-        <input type="text" id="node-config-input-accesskeyid" placeholder="accesskeyid">
+        <label for="node-config-input-accesskeyid"><i class="fa fa-user-secret"></i> <span data-i18n="cos.label.accesskeyid"></span></label>
+        <input type="text" id="node-config-input-accesskeyid" data-i18n="[placeholder]cos.placeholder.accesskeyid">
     </div>
     <div id="accesskey" class="form-row">
-        <label for="node-config-input-accesskey"><i class="fa fa-user-secret"></i> Access Key</label>
-        <input type="text" id="node-config-input-accesskey" placeholder="accesskey">
+        <label for="node-config-input-accesskey"><i class="fa fa-user-secret"></i> <span data-i18n="cos.label.accesskey"></span></label>
+        <input type="text" id="node-config-input-accesskey" data-i18n="[placeholder]cos.placeholder.accesskey">
     </div>
 
     
