@@ -366,10 +366,10 @@
         <dt>payload
             <span class="property-type">string | buffer</span>
         </dt>
-        <dd> the payload of the message to trigger the put. </dd>
+        <dd> the payload of the message to trigger the delete. </dd>
 
         <dt class="optional">bucket <span class="property-type">string</span></dt>
-        <dd> the existing bucket in which the object will be stored.</dd>
+        <dd> the existing bucket in which the object will be deleted.</dd>
 
         <dt class="optional">objectname <span class="property-type">string</span></dt>
         <dd> the unique name of the stored file in the Cloud Object Storage Service.</dd>
@@ -380,9 +380,7 @@
 
 	<p>The <code>msg.mode</code> indicates if the <code>msg.payload</code> contains the raw file or only the trigger for the object in the file system </p>
 	<p>You can override the node-defaults by giving <code>msg.filename</code>, <code>msg.filepath</code> and <code>msg.fileformat</code> with the necessary information.</p>
-	<p>The node returns <code>msg.payload</code> and the <code>msg.objectname</code> name of the object or <code>msg.error</code> with the errorcode. </p>
-    <p>If you want to have a URL to the object generated HMAC must be enabeled and the keys given. </p>
-    <p>This Node uses the S3-API function of the IBM Cloud Object Storage Service. </p>
+	<p>The node returns <code>msg.status</code> if it could be deleted or not and in <code>msg.error</code> with the errorcode. </p>
 </script>
 
 <script type="text/javascript">
@@ -395,7 +393,7 @@
             cosconfig: {value:"", type:"cos-config", required:true}
         },
         inputs:1,               
-        outputs:0, 
+        outputs:1, 
         icon: "cloud1_20x20.png",
         color: "#A6BBCF",
 		label: function() {   

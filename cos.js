@@ -418,11 +418,11 @@ module.exports = function(RED) {
 				}
 
 				// Upload from File 
-		        var body = fs.createReadStream(filefqn);
-		        
-		        // get Filesize
-		        var stats = fs.statSync(filefqn);
-		        var fileSizeInBytes = stats['size'];
+				var body = fs.createReadStream(filefqn);
+
+				// get Filesize
+				var stats = fs.statSync(filefqn);
+				var fileSizeInBytes = stats['size'];
 			} else {
 				// store the obj directly from msg.payload
 				var body = new Buffer(msg.payload, "binary");	 
@@ -435,14 +435,14 @@ module.exports = function(RED) {
 			cos.putObject({
 				Bucket: bucket,
 				Body: body,
-                Key: objectname
-            }, function(err, data) {
-                if (err) {
+				Key: objectname
+			}, function(err, data) {
+				if (err) {
 					// Send error back 
 					node.status({fill:"red",shape:"ring",text:"cos.status.failed"});
 					node.error(RED._("cos.error.upload-failed", {err:err}));
 					return;
-                }	
+				}	
 				
 				// Provide the needed Feedback
 				msg.objectname = objectname;
@@ -469,7 +469,7 @@ module.exports = function(RED) {
 					});
 
 				}
-				 					
+
 				// Set the node-status
 				node.status({fill:"green",shape:"ring",text:"cos.status.ready"});
 
@@ -477,7 +477,7 @@ module.exports = function(RED) {
 				node.send(msg);
 			});
 			
-        });
+		});
 
 		// respond to close....
 		this.on('close', function(removed, done) {
@@ -489,50 +489,50 @@ module.exports = function(RED) {
 			node.status({});
 			done();
 		});
-    }
-    RED.nodes.registerType("cos-put",COSPutNode);
+	}
+	RED.nodes.registerType("cos-put",COSPutNode);
 
-    // Object Storage Del Node
-    function COSDelNode(n) {
-        // Create a RED node
-        RED.nodes.createNode(this,n);
+	// Object Storage Del Node
+	function COSDelNode(n) {
+		// Create a RED node
+		RED.nodes.createNode(this,n);
 
-        // Store local copies of the node configuration (as defined in the .html)
-        this.bucket = n.bucket;
-        this.objectname = n.objectname;
-        this.name = n.name;
+		// Store local copies of the node configuration (as defined in the .html)
+		this.bucket = n.bucket;
+		this.objectname = n.objectname;
+		this.name = n.name;
 
-        // Retrieve the Object Storage config node
-        this.cosconfig = RED.nodes.getNode(n.cosconfig);
+		// Retrieve the Object Storage config node
+		this.cosconfig = RED.nodes.getNode(n.cosconfig);
 
-        // copy "this" object in case we need it in context of callbacks of other functions.
-        var node = this;
+		// copy "this" object in case we need it in context of callbacks of other functions.
+		var node = this;
 
-        // Check if the Config to the Service is given 
-        if (this.cosconfig) {
-            // Do something with the config
-         	node.status({fill:"blue",shape:"ring",text:"cos.status.initializing"});
-        } else {
+		// Check if the Config to the Service is given 
+		if (this.cosconfig) {
+			// Do something with the config
+			node.status({fill:"blue",shape:"ring",text:"cos.status.initializing"});
+		} else {
 			// No config node configured
 			node.warn(RED._("cos.warn.missing-credentials"));
-	        node.status({fill:"red",shape:"ring",text:"cos.status.missing-credentials"});
-	        return;
-        }
+			node.status({fill:"red",shape:"ring",text:"cos.status.missing-credentials"});
+			return;
+		}
 
-        // respond to inputs....
-        this.on('input', function (msg) {
-         	// Local Vars and Modules
+		// respond to inputs....
+		this.on('input', function (msg) {
+			// Local Vars and Modules
 			var ibmcos = require('ibm-cos-sdk');
 
 			var objectname; 
 			var bucket;
 
 			// Help Debug
-	        console.log('Cloud Object Storage Del (log): Init done');
+			console.log('Cloud Object Storage Del (log): Init done');
 
-	        // Set the status to green
+			// Set the status to green
 			node.status({fill:"green",shape:"ring",text:"cos.status.connected"});
-         	
+
 			// Check ObjectName
 			if ((msg.objectname) && (msg.objectname.trim() !== "")) {
 				objectname = msg.objectname;
@@ -540,21 +540,21 @@ module.exports = function(RED) {
 				objectname = node.objectname;
 			}
 
- 			// Check bucket
-         	if ((msg.bucket) && (msg.bucket.trim() !== "")) {
-         		bucket = msg.bucket;
-         	} else {
-         		if (node.bucket) {
-         			bucket = node.bucket;
-         		} else {
-         			bucket = "DefaultBucket";
-         		}
-			 }
+			// Check bucket
+			if ((msg.bucket) && (msg.bucket.trim() !== "")) {
+				bucket = msg.bucket;
+			} else {
+				if (node.bucket) {
+					bucket = node.bucket;
+				} else {
+					bucket = "DefaultBucket";
+				}
+			}
 
-			 // Check hmac 
-			 var hmac = node.cosconfig.hmac;
+			// Check hmac 
+			var hmac = node.cosconfig.hmac;
 
-         	if (hmac) {
+			if (hmac) {
 				// Create HMAC Credentials 
 				var accessKeyId = node.cosconfig.accesskeyid;
 				var secretAccessKey = node.cosconfig.accesskey;
@@ -579,7 +579,7 @@ module.exports = function(RED) {
 					serviceInstanceId: node.cosconfig.serviceInstanceId,
 				};
 			}
-						 
+
 			// Create Access Instance 
 			var cos = new ibmcos.S3(config);
 
@@ -590,11 +590,14 @@ module.exports = function(RED) {
 			cos.headObject({
 				Bucket: bucket, 
 				Key: objectname
-			   }, function(err, data) {
-                if (err) {
+			}, function(err, data) {
+				if (err) {
 					// Send error back 
 					node.status({fill:"red",shape:"ring",text:"cos.status.failed"});
 					node.error(RED._("cos.errors.object-not-found", {err:err}));
+					msg.error = err;
+					msg.status = "notfound";
+					node.send(msg);
 					return;
 				} else {
 					// delete the object out of the bucket
@@ -606,11 +609,16 @@ module.exports = function(RED) {
 							// Send error back 
 							node.status({fill:"red",shape:"ring",text:"cos.status.failed"});
 							node.error(RED._("cos.error.delete-failed", {err:err}));
+							msg.error = err;
+							msg.status = "delete error";
+							node.send(msg);
 							return;
 						} 
 
 						// store feedback values
 						msg.objectname = objectname;
+						msg.error = "";
+						msg.status = "deleted";
 			
 						console.log('Cloud Object Storage Del (log): object deleted',objectname);
 													
@@ -634,8 +642,8 @@ module.exports = function(RED) {
 			node.status({});
 			done();
 		});
-    }
-    RED.nodes.registerType("cos-del",COSDelNode);
+	}
+	RED.nodes.registerType("cos-del",COSDelNode);
 
 
     // Object Storage Qry Node
