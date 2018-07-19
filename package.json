@@ -33,9 +33,7 @@
   "dependencies": {
     "es6-error": "latest",
     "fs": "latest",
-    "fs-extra": "latest",
     "ibm-cos-sdk": "latest",
-    "is-utf8": "latest",
-    "node-uuid": "latest"
+    "is-utf8": "latest"
   }
 }

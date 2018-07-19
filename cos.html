@@ -172,6 +172,13 @@
         <label for="node-input-bucket"><i class="fa fa-folder-open-o"></i> <span data-i18n="cos.label.bucket"></span></label>
         <input type="text" id="node-input-bucket" data-i18n="[placeholder]cos.placeholder.bucket">
     </div>
+    <div id="create" class="form-row">
+        <label for="node-input-create"><i class="fa fa-plus-square-o"></i> <span data-i18n="cos.label.create"></span></label>
+        <select id="node-input-create">
+            <option value="0" data-i18n="cos.options.no"></option>
+            <option value="1" data-i18n="cos.options.yes"></option>
+        </select>
+    </div>
     <div id="mode" class="form-row">
         <label for="node-input-mode"><i class="fa fa-file-o"></i> <span data-i18n="cos.label.mode"></span></label>
         <select id="node-input-mode">
@@ -298,6 +305,7 @@
         defaults: {             
             name: {value:""},
             bucket: {value:"", required:true},
+            create: {value:"0", required:true},
             objectname: {value:"", required:false},
             mode: {value:"0", required:true},
             filepath: {value:"", required:false},

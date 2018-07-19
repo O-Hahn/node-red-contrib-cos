@@ -18,14 +18,14 @@
 
 
 module.exports = function(RED) {
-    "use strict";
+	"use strict";
 
-    // require any external libraries ....
+	// require any external libraries ....
     
-    // Cloud Object Storage Get Node - Main Function
-    function COSGetNode(n) {
-        // Create a RED node
-        RED.nodes.createNode(this,n);
+	// Cloud Object Storage Get Node - Main Function
+	function COSGetNode(n) {
+		// Create a RED node
+		RED.nodes.createNode(this,n);
 
 		// Store local copies of the node configuration (as defined in the .html)
 		this.bucket = n.bucket;
@@ -36,33 +36,30 @@ module.exports = function(RED) {
 		this.geturl = n.geturl;
 		this.name = n.name;
 
-        // Retrieve the Cloud Object Storage config node
-        this.cosconfig = RED.nodes.getNode(n.cosconfig);
+		// Retrieve the Cloud Object Storage config node
+		this.cosconfig = RED.nodes.getNode(n.cosconfig);
 
-        // copy "this" object in case we need it in context of callbacks of other functions.
-        var node = this;
+		// copy "this" object in case we need it in context of callbacks of other functions.
+		var node = this;
 
-        // Check if the Config to the Service is given 
-        if (this.cosconfig) {
-            // Do something with:
-         	node.status({fill:"blue",shape:"ring",text:"cos.status.initializing"});
-        } else {
+		// Check if the Config to the Service is given 
+		if (this.cosconfig) {
+			// Do something with:
+			node.status({fill:"blue",shape:"ring",text:"cos.status.initializing"});
+		} else {
 			// No config node configured
 			node.warn(RED._("cos.warn.missing-credentials"));
-	        node.status({fill:"red",shape:"ring",text:"cos.status.missing-credentials"});
-	        // node.warn('Cloud Object Storage Get: No object storage service configuration found!');
-	        return;
-        }
+			node.status({fill:"red",shape:"ring",text:"cos.status.missing-credentials"});
+			// node.warn('Cloud Object Storage Get: No object storage service configuration found!');
+			return;
+		}
 
-        // respond to inputs....
-        this.on('input', function (msg) {
-         	// Local Modules
-         	var fsextra = require("fs-extra");
-         	var fs = require("fs");
-         	var localdir = __dirname;
-			var uuid = require('node-uuid').v4();
-			var ibmcos = require('ibm-cos-sdk');
-			var util = require('util');
+		// respond to inputs....
+		this.on("input", function (msg) {
+			// Local Modules
+			var fs = require("fs");
+			var localdir = __dirname;
+			var ibmcos = require("ibm-cos-sdk");
 
 			// Local Vars
 			var filename;
@@ -72,67 +69,68 @@ module.exports = function(RED) {
 			var bucket;
 			var mode;
 			var geturl = node.geturl || msg.geturl;
+			var config;
 
 			// Help Debug
-	        console.log('Cloud Object Storage Get (log): Init done');
+			console.log("Cloud Object Storage Get (log): Init done");
 
-	        // Set the status to green
+			// Set the status to green
 			node.status({fill:"green",shape:"ring",text:"cos.status.connected"});
-         	
-         	// Check ObjectName 
-         	if ((msg.objectname) && (msg.objectname.trim() !== "")) {
-         		objectname = msg.objectname;
-         	} else {
-     			objectname = node.objectname;
-         	}
 
-         	// Check Filename
-         	if ((msg.filename) && (msg.filename.trim() !== "")) {
-         		filename = msg.filename;
-         	} else {
-				 if (node.filename) {
+			// Check ObjectName 
+			if ((msg.objectname) && (msg.objectname.trim() !== "")) {
+				objectname = msg.objectname;
+			} else {
+				objectname = node.objectname;
+			}
+
+			// Check Filename
+			if ((msg.filename) && (msg.filename.trim() !== "")) {
+				filename = msg.filename;
+			} else {
+				if (node.filename) {
 					filename = node.filename;
 				} else {
 					filename = objectname;					
 				}
-         	}
+			}
 
 			// Check filepath
-         	if ((msg.filepath) && (msg.filepath.trim() !== "")) {
-         		filepath = msg.filepath;
-         	} else {
-         		if (node.filepath) {
-         			filepath = node.filepath;
-         		} else {
-         			filepath = localdir;
-         		}
-         	}
+			if ((msg.filepath) && (msg.filepath.trim() !== "")) {
+				filepath = msg.filepath;
+			} else {
+				if (node.filepath) {
+					filepath = node.filepath;
+				} else {
+					filepath = localdir;
+				}
+			}
 
-			 // Check mode
+			// Check mode
 			if ((msg.mode) && (msg.mode.trim() !== "")) {
 				mode = msg.mode;
 			} else {
 				mode = node.mode;
 			}
 
-         	// Set FQN for this file
-     		filefqn = filepath + filename;
-         	
- 			// Check bucket
-         	if ((msg.bucket) && (msg.bucket.trim() !== "")) {
-         		bucket = msg.bucket;
-         	} else {
-         		if (node.bucket) {
-         			bucket = node.bucket;
-         		} else {
-         			bucket = "DefaultBucket";
-         		}
-         	}
+			// Set FQN for this file
+			filefqn = filepath + filename;
+
+			// Check bucket
+			if ((msg.bucket) && (msg.bucket.trim() !== "")) {
+				bucket = msg.bucket;
+			} else {
+				if (node.bucket) {
+					bucket = node.bucket;
+				} else {
+					bucket = "DefaultBucket";
+				}
+			}
 
 			// Check hmac 
 			var hmac = node.cosconfig.hmac;
 
-         	if (hmac) {
+			if (hmac) {
 				// Create HMAC Credentials 
 				var accessKeyId = node.cosconfig.accesskeyid;
 				var secretAccessKey = node.cosconfig.accesskey;
@@ -140,12 +138,12 @@ module.exports = function(RED) {
 				var cred = new ibmcos.Credentials(accessKeyId, secretAccessKey);
 
 				// Enable the Cloud Object Storage Service Call without hmac credentials
-				var config = {
+				config = {
 					endpoint: node.cosconfig.endpoint,
 					apiKeyId: node.cosconfig.apiKeyId,
 					ibmAuthEndpoint: node.cosconfig.ibmAuthEndpoint,
 					serviceInstanceId: node.cosconfig.serviceInstanceId,
-					signatureVersion: 'v4',
+					signatureVersion: "v4",
 					credentials: cred
 				};
 				geturl = node.geturl || msg.geturl;
@@ -153,7 +151,7 @@ module.exports = function(RED) {
 
 			} else {
 				// Enable the Cloud Object Storage Service Call with hmac enabled
-				var config = {
+				config = {
 					endpoint: node.cosconfig.endpoint,
 					apiKeyId: node.cosconfig.apiKeyId,
 					ibmAuthEndpoint: node.cosconfig.ibmAuthEndpoint,
@@ -170,16 +168,16 @@ module.exports = function(RED) {
 			// Get the Object from the Cloud Object Storage 			
 			node.status({fill:"green",shape:"dot",text:"cos.status.downloading"});
 			cos.getObject({
-                Bucket: bucket,
-                Key: objectname
-            }, function(err, data) {
-                if (err) {
+				Bucket: bucket,
+				Key: objectname
+			}, function(err, data) {
+				if (err) {
 					// Send error back 
 					node.status({fill:"red",shape:"ring",text:"cos.status.failed"});
 					node.error(RED._("cos.error.failed-to-fetch", {err:err}));
 					return;
 				} 
-				 
+				
 				// mode defines if it is a filebased save or buffermode into payload
 				if (mode == "0") {
 					// Download into new File 
@@ -187,30 +185,30 @@ module.exports = function(RED) {
 						encoding : null
 					};
 					
-					fs.writeFileSync(filefqn, r.body, opt);
+					fs.writeFileSync(filefqn, data, opt);
 					msg.payload = filefqn;
 					msg.filename = filename;
 					msg.filepaht = filepath;
 					msg.objectname = objectname;
 			
-					console.log('Cloud Object Storage Get (log): write into file - ', filefqn);
+					console.log("Cloud Object Storage Get (log): write into file - ", filefqn);
 				} else {
 
 					// store the obj directly from msg.payload
 					//if (format == "utf8") {
 					//    msg.payload = data.Body.toString('utf8');
 					//} else {
-						msg.objectname = objectname;
-						msg.payload = data.Body;
+					msg.objectname = objectname;
+					msg.payload = data.Body;
 					//}
 
-					console.log('Cloud Object Storage Get (log): object loaded',objectname);
+					console.log("Cloud Object Storage Get (log): object loaded",objectname);
 				}
 			
 				// Generate URL to the object if needed 
 				if (geturl) {
 					// Get the URL to the object 
-					var url = cos.getSignedUrl('getObject', {
+					var gurl = cos.getSignedUrl("getObject", {
 						Bucket: bucket,
 						Key: objectname
 					}, function (err, url) {
@@ -221,7 +219,7 @@ module.exports = function(RED) {
 							return;
 						} 
 
-						console.log('Cloud Object Storage Get (log): The URL is', url);
+						console.log("Cloud Object Storage Get (log): The URL is", url);
 						msg.url = url;	
 					});
 
@@ -232,11 +230,11 @@ module.exports = function(RED) {
 
 				// Send the output back 
 				node.send(msg);	
-            });
+			});
 		});
 
 		// respond to close....
-		this.on('close', function(removed, done) {
+		this.on("close", function(removed, done) {
 			if (removed) {
 				// This node has been deleted
 			} else {
@@ -245,51 +243,51 @@ module.exports = function(RED) {
 			node.status({});
 			done();
 		});
-    }
-    RED.nodes.registerType("cos-get",COSGetNode);
+	}
+	RED.nodes.registerType("cos-get",COSGetNode);
 
-    // Cloud Object Storage Put Node - Main Function
-    function COSPutNode(n) {
-        // Create a RED node
-        RED.nodes.createNode(this,n);
+	// Cloud Object Storage Put Node - Main Function
+	function COSPutNode(n) {
+		// Create a RED node
+		RED.nodes.createNode(this,n);
 
 		// Store local copies of the node configuration (as defined in the .html)
-        this.mode = n.mode;
-        this.filepath = n.filepath;
-        this.filename = n.filename;
+		this.mode = n.mode;
+		this.filepath = n.filepath;
+		this.filename = n.filename;
 		this.objectname = n.objectname;
 		this.contentType = n.contentType;
 		this.bucket = n.bucket;
+		this.create = n.create; 
 		this.geturl = n.geturl;
-        this.name = n.name;
+		this.name = n.name;
 
-        // Retrieve the Object Storage config node
-        this.cosconfig = RED.nodes.getNode(n.cosconfig);
+		// Retrieve the Object Storage config node
+		this.cosconfig = RED.nodes.getNode(n.cosconfig);
 
-        // copy "this" object in case we need it in context of callbacks of other functions.
-        var node = this;
+		// copy "this" object in case we need it in context of callbacks of other functions.
+		var node = this;
 
-        // Check if the Config to the Service is given 
-        if (this.cosconfig) {
-            // Do something with the config
-         	node.status({fill:"blue",shape:"ring",text:"cos.status.initializing"});
-        } else {
+		// Check if the Config to the Service is given 
+		if (this.cosconfig) {
+			// Do something with the config
+			node.status({fill:"blue",shape:"ring",text:"cos.status.initializing"});
+		} else {
 			// No config node configured
 			node.warn(RED._("cos.warn.missing-credentials"));
-	        node.status({fill:"red",shape:"ring",text:"cos.status.missing-credentials"});
-	        return;
-        }
+			node.status({fill:"red",shape:"ring",text:"cos.status.missing-credentials"});
+			return;
+		}
 		
-        // respond to inputs....
-        this.on('input', function (msg) {
-         	// Local Vars and Modules
-         	var fsextra = require("fs-extra");
-         	var fs = require("fs");
-         	var localdir = __dirname;
-        	var uuid = require('node-uuid').v4();
-			var ibmcos = require('ibm-cos-sdk');
+		// respond to inputs....
+		this.on("input", function (msg) {
 
-         	var mode;
+			// Local Vars and Modules
+			var fs = require("fs");
+			var localdir = __dirname;
+			var ibmcos = require("ibm-cos-sdk");
+
+			var mode;
 			var filename;
 			var filepath;
 			var fileformat;
@@ -297,47 +295,49 @@ module.exports = function(RED) {
 			var objectname; 
 			var filefqn;
 			var bucket;
+			var create;
 			var geturl = node.geturl || msg.geturl;
+			var config;
 
 			// Help Debug
-	        console.log('Cloud Object Storage Put (log): Init done');
+			console.log("Cloud Object Storage Put (log): Init done");
 
-	        // Set the status to green
+			// Set the status to green
 			node.status({fill:"green",shape:"ring",text:"cos.status.connected"});
-         	
-			// Check mode
-         	if ((msg.mode) && (msg.mode.trim() !== "")) {
-         		mode = msg.mode;
-         	} else {
-         		if (node.mode) {
-         			mode = node.mode;
-         		} else {
-         			mode = "1";
-         		}
-         	}
 
-         	// Check Filename
-         	if ((msg.filename) && (msg.filename.trim() !== "")) {
-         		filename = msg.filename;
-         	} else {
-         		if (node.filename) {
-         			filename = node.filename;
-         		} else {
+			// Check mode
+			if ((msg.mode) && (msg.mode.trim() !== "")) {
+				mode = msg.mode;
+			} else {
+				if (node.mode) {
+					mode = node.mode;
+				} else {
+					mode = "1";
+				}
+			}
+
+			// Check Filename
+			if ((msg.filename) && (msg.filename.trim() !== "")) {
+				filename = msg.filename;
+			} else {
+				if (node.filename) {
+					filename = node.filename;
+				} else {
 					// Error ?!!?
 				}
-         	}
+			}
 
 			// Check filepath
-         	if ((msg.filepath) && (msg.filepath.trim() !== "")) {
-         		filepath = msg.filepath;
-         	} else {
-         		if (node.filepath) {
-         			filepath = node.filepath;
-         		} else {
-         			filepath = localdir;
-         		}
-         	}
-         	
+			if ((msg.filepath) && (msg.filepath.trim() !== "")) {
+				filepath = msg.filepath;
+			} else {
+				if (node.filepath) {
+					filepath = node.filepath;
+				} else {
+					filepath = localdir;
+				}
+			}
+
 			// Set the right mime-format
 			if ((msg.contentType) && (msg.contentType.trim() !== "")) {
 				contentType = msg.contentType;
@@ -346,11 +346,11 @@ module.exports = function(RED) {
 					contentType = node.contentType;
 				} 
 			}
-		   
-         	// Set FQN for this file
-     		filefqn = filepath  + filename;
-         	
-         	// Check objectname and define against objectmode
+
+			// Set FQN for this file
+			filefqn = filepath  + filename;
+
+			// Check objectname and define against objectmode
 			if ((msg.objectname) && (msg.objectname.trim() !== "")) {
 				objectname = msg.objectname;
 			} else {
@@ -361,21 +361,32 @@ module.exports = function(RED) {
 				}
 			}
 
- 			// Check bucket
-         	if ((msg.bucket) && (msg.bucket.trim() !== "")) {
-         		bucket = msg.bucket;
-         	} else {
-         		if (node.bucket) {
-         			bucket = node.bucket;
-         		} else {
-					 // Error
-         		}
-         	}
+			// Check bucket
+			if ((msg.bucket) && (msg.bucket.trim() !== "")) {
+				bucket = msg.bucket;
+			} else {
+				if (node.bucket) {
+					bucket = node.bucket;
+				} else {
+					// Error
+				}
+			}
 
-			 // Check hmac credentials if provided
+			// Check create - if bucket not exists create ?
+			if ((msg.create) && (msg.create.trim() !== "")) {
+				create = msg.create;
+			} else {
+				if (node.create) {
+					create = node.create;
+				} else {
+					create = "0";
+				}
+			}
+
+			// Check hmac credentials if provided
 			var hmac = node.cosconfig.hmac;
 
-         	if (hmac) {
+			if (hmac) {
 				// Create HMAC Credentials 
 				var accessKeyId = node.cosconfig.accesskeyid;
 				var secretAccessKey = node.cosconfig.accesskey;
@@ -383,18 +394,18 @@ module.exports = function(RED) {
 				var cred = new ibmcos.Credentials(accessKeyId, secretAccessKey);
 
 				// Enable the Cloud Object Storage Service Call without hmac credentials
-				var config = {
+				config = {
 					endpoint: node.cosconfig.endpoint,
 					apiKeyId: node.cosconfig.apiKeyId,
 					ibmAuthEndpoint: node.cosconfig.ibmAuthEndpoint,
 					serviceInstanceId: node.cosconfig.serviceInstanceId,
-					signatureVersion: 'v4',
+					signatureVersion: "v4",
 					credentials: cred
 				};
 				geturl = node.geturl || msg.geturl;
 			} else {
 				// Enable the Cloud Object Storage Service Call with hmac enabled
-				var config = {
+				config = {
 					endpoint: node.cosconfig.endpoint,
 					apiKeyId: node.cosconfig.apiKeyId,
 					ibmAuthEndpoint: node.cosconfig.ibmAuthEndpoint,
@@ -403,11 +414,14 @@ module.exports = function(RED) {
 				// Url could not be created because of missing signature
 				geturl = false;
 			}
-						 
+
 			// Create Access Instance 
 			var cos = new ibmcos.S3(config);
 
-         	// mode is buffermode or filebased - get the data into body
+			// Fill body with the content 
+			var body;
+
+			// mode is buffermode or filebased - get the data into body
 			if (mode == "0") {
 				// Check if 
 				if (fs.existsSync(filefqn) === false) {
@@ -418,20 +432,51 @@ module.exports = function(RED) {
 				}
 
 				// Upload from File 
-				var body = fs.createReadStream(filefqn);
+				body = fs.createReadStream(filefqn);
 
 				// get Filesize
 				var stats = fs.statSync(filefqn);
 				var fileSizeInBytes = stats['size'];
 			} else {
 				// store the obj directly from msg.payload
-				var body = new Buffer(msg.payload, "binary");	 
+				body = new Buffer(msg.payload, "binary");	 
 			}
 
 			console.log("URL: " + geturl + "HMAC: " + hmac);
 
-			// Put the Object to the IBM Cloud Object Storage 			
+			// Start the upload
 			node.status({fill:"green",shape:"dot",text:"cos.status.uploading"});
+
+			// Check if Bucket exists and create (if seleced)
+			if (create = "1") {
+				cos.headBucket({
+					Bucket: bucket
+				}, function (err, data) {
+					if (err) {
+						// Bucket not exists 
+						if (err.statusCode === 404) {
+							// Create Bucket 
+							cos.createBucket({
+								Bucket: bucket
+							}, function(err, data) {
+								if (err) {
+									// Send error back 
+									node.status({fill:"red",shape:"ring",text:"cos.status.failed"});
+									node.error(RED._("cos.error.bucket-not-created", {err:err}));
+									return;
+								}
+							});	
+						} else {
+							// Send error back 
+							node.status({fill:"red",shape:"ring",text:"cos.status.failed"});
+							node.error(RED._("cos.error.bucket-not-created", {err:err}));
+							return;
+						}
+					}
+				});	
+			}
+
+			// Put the Object to the IBM Cloud Object Storage 			
 			cos.putObject({
 				Bucket: bucket,
 				Body: body,
@@ -448,12 +493,12 @@ module.exports = function(RED) {
 				msg.objectname = objectname;
 				msg.filefqn = filefqn;
 
-				console.log('Cloud Object Storage Put (log): object stored',objectname);
+				console.log("Cloud Object Storage Put (log): object stored",objectname);
 			
 				// Generate URL to the object if needed 
 				if (geturl) {
 					// Get the URL to the object 
-					var url = cos.getSignedUrl('getObject', {
+					var gurl = cos.getSignedUrl("getObject", {
 						Bucket: bucket,
 						Key: objectname
 					}, function (err, url) {
@@ -464,7 +509,7 @@ module.exports = function(RED) {
 							return;
 						} 
 
-						console.log('Cloud Object Storage Put (log): The URL is', url);
+						console.log("Cloud Object Storage Put (log): The URL is", url);
 						msg.url = url;	
 					});
 
@@ -480,7 +525,7 @@ module.exports = function(RED) {
 		});
 
 		// respond to close....
-		this.on('close', function(removed, done) {
+		this.on("close", function(removed, done) {
 			if (removed) {
 				// This node has been deleted
 			} else {
@@ -520,15 +565,16 @@ module.exports = function(RED) {
 		}
 
 		// respond to inputs....
-		this.on('input', function (msg) {
+		this.on("input", function (msg) {
 			// Local Vars and Modules
-			var ibmcos = require('ibm-cos-sdk');
+			var ibmcos = require("ibm-cos-sdk");
 
 			var objectname; 
 			var bucket;
+			var config;
 
 			// Help Debug
-			console.log('Cloud Object Storage Del (log): Init done');
+			console.log("Cloud Object Storage Del (log): Init done");
 
 			// Set the status to green
 			node.status({fill:"green",shape:"ring",text:"cos.status.connected"});
@@ -562,17 +608,17 @@ module.exports = function(RED) {
 				var cred = new ibmcos.Credentials(accessKeyId, secretAccessKey);
 
 				// Enable the Cloud Object Storage Service Call without hmac credentials
-				var config = {
+				config = {
 					endpoint: node.cosconfig.endpoint,
 					apiKeyId: node.cosconfig.apiKeyId,
 					ibmAuthEndpoint: node.cosconfig.ibmAuthEndpoint,
 					serviceInstanceId: node.cosconfig.serviceInstanceId,
-					signatureVersion: 'v4',
+					signatureVersion: "v4",
 					credentials: cred
 				};
 			} else {
 				// Enable the Cloud Object Storage Service Call with hmac enabled
-				var config = {
+				config = {
 					endpoint: node.cosconfig.endpoint,
 					apiKeyId: node.cosconfig.apiKeyId,
 					ibmAuthEndpoint: node.cosconfig.ibmAuthEndpoint,
@@ -620,7 +666,7 @@ module.exports = function(RED) {
 						msg.error = "";
 						msg.status = "deleted";
 			
-						console.log('Cloud Object Storage Del (log): object deleted',objectname);
+						console.log("Cloud Object Storage Del (log): object deleted",objectname);
 													
 						// Set the node-status
 						node.status({fill:"green",shape:"ring",text:"cos.status.ready"});
@@ -633,7 +679,7 @@ module.exports = function(RED) {
 		});
 
 		// respond to close....
-		this.on('close', function(removed, done) {
+		this.on("close", function(removed, done) {
 			if (removed) {
 				// This node has been deleted
 			} else {
@@ -646,49 +692,50 @@ module.exports = function(RED) {
 	RED.nodes.registerType("cos-del",COSDelNode);
 
 
-    // Object Storage Qry Node
-    function COSQryNode(n) {
-        // Create a RED node
-        RED.nodes.createNode(this,n);
+	// Object Storage Qry Node
+	function COSQryNode(n) {
+		// Create a RED node
+		RED.nodes.createNode(this,n);
 
-        // Store local copies of the node configuration (as defined in the .html)
-        this.bucket = n.bucket;
+		// Store local copies of the node configuration (as defined in the .html)
+		this.bucket = n.bucket;
 		this.objectname = n.objectname;
 		this.maxkeys = n.maxkeys;
-        this.name = n.name;
+		this.name = n.name;
 
-        // Retrieve the Object Storage config node
-        this.cosconfig = RED.nodes.getNode(n.cosconfig);
+		// Retrieve the Object Storage config node
+		this.cosconfig = RED.nodes.getNode(n.cosconfig);
 
-        // copy "this" object in case we need it in context of callbacks of other functions.
-        var node = this;
+		// copy "this" object in case we need it in context of callbacks of other functions.
+		var node = this;
 
-        // Check if the Config to the Service is given 
-        if (this.cosconfig) {
-            // Do something with the config
-         	node.status({fill:"blue",shape:"ring",text:"cos.status.initializing"});
-        } else {
+		// Check if the Config to the Service is given 
+		if (this.cosconfig) {
+			// Do something with the config
+			node.status({fill:"blue",shape:"ring",text:"cos.status.initializing"});
+		} else {
 			// No config node configured
 			node.warn(RED._("cos.warn.missing-credentials"));
-	        node.status({fill:"red",shape:"ring",text:"cos.status.missing-credentials"});
-	        return;
-        }
+			node.status({fill:"red",shape:"ring",text:"cos.status.missing-credentials"});
+			return;
+		}
 
-        // respond to inputs....
-        this.on('input', function (msg) {
-         	// Local Vars and Modules
+		// respond to inputs....
+		this.on("input", function (msg) {
+			// Local Vars and Modules
 			var ibmcos = require('ibm-cos-sdk');
 
 			var objectname; 
 			var bucket;
 			var maxkeys = node.maxkeys || msg.maxkeys;
+			var config;
 
 			// Help Debug
-	        console.log('Cloud Object Storage Qry (log): Init done');
+			console.log("Cloud Object Storage Qry (log): Init done");
 
-	        // Set the status to green
+			// Set the status to green
 			node.status({fill:"green",shape:"ring",text:"cos.status.connected"});
-         	
+
 			// Check ObjectName
 			if ((msg.objectname) && (msg.objectname.trim() !== "")) {
 				objectname = msg.objectname;
@@ -696,21 +743,21 @@ module.exports = function(RED) {
 				objectname = node.objectname;
 			}
 
- 			// Check bucket
-         	if ((msg.bucket) && (msg.bucket.trim() !== "")) {
-         		bucket = msg.bucket;
-         	} else {
-         		if (node.bucket) {
-         			bucket = node.bucket;
-         		} else {
-         			bucket = "DefaultBucket";
-         		}
-			 }
+			// Check bucket
+			if ((msg.bucket) && (msg.bucket.trim() !== "")) {
+				bucket = msg.bucket;
+			} else {
+				if (node.bucket) {
+					bucket = node.bucket;
+				} else {
+					bucket = "DefaultBucket";
+				}
+			}
 
-			 // Check hmac 
-			 var hmac = node.cosconfig.hmac;
+			// Check hmac 
+			var hmac = node.cosconfig.hmac;
 
-         	if (hmac) {
+			if (hmac) {
 				// Create HMAC Credentials 
 				var accessKeyId = node.cosconfig.accesskeyid;
 				var secretAccessKey = node.cosconfig.accesskey;
@@ -718,24 +765,24 @@ module.exports = function(RED) {
 				var cred = new ibmcos.Credentials(accessKeyId, secretAccessKey);
 
 				// Enable the Cloud Object Storage Service Call without hmac credentials
-				var config = {
+				config = {
 					endpoint: node.cosconfig.endpoint,
 					apiKeyId: node.cosconfig.apiKeyId,
 					ibmAuthEndpoint: node.cosconfig.ibmAuthEndpoint,
 					serviceInstanceId: node.cosconfig.serviceInstanceId,
-					signatureVersion: 'v4',
+					signatureVersion: "v4",
 					credentials: cred
 				};
 			} else {
 				// Enable the Cloud Object Storage Service Call with hmac enabled
-				var config = {
+				config = {
 					endpoint: node.cosconfig.endpoint,
 					apiKeyId: node.cosconfig.apiKeyId,
 					ibmAuthEndpoint: node.cosconfig.ibmAuthEndpoint,
 					serviceInstanceId: node.cosconfig.serviceInstanceId,
 				};
 			}
-						 
+
 			// Create Access Instance 
 			var cos = new ibmcos.S3(config);
 
@@ -743,11 +790,11 @@ module.exports = function(RED) {
 			node.status({fill:"green",shape:"dot",text:"cos.status.query"});
 
 			cos.listObjects({
-                Bucket: bucket,
+				Bucket: bucket,
 				MaxKeys: maxkeys
-	//				Key: objectname
-            }, function(err, data) {
-                if (err) {
+				//				Key: objectname
+			}, function(err, data) {
+				if (err) {
 					// Send error back 
 					node.status({fill:"red",shape:"ring",text:"cos.status.failed"});
 					node.error(RED._("cos.errors.object-not-found", {err:err}));
@@ -763,7 +810,7 @@ module.exports = function(RED) {
 					var elem = {
 						Key: data.Contents[x].Key,
 						Size: data.Contents[x].Size
-					}
+					};
 					retarr.push(elem);
 				}
 
@@ -771,18 +818,18 @@ module.exports = function(RED) {
 				msg.found = num;
 				msg.payload = retarr;
 	
-				console.log('Cloud Object Storage Qry (log): objects listed');
+				console.log("Cloud Object Storage Qry (log): objects listed");
 															
 				// Set the node-status
 				node.status({fill:"green",shape:"ring",text:"cos.status.ready"});
 
 				// Send the output back 
 				node.send(msg);
-            });
+			});
 		});
  
 		// respond to close....
-		this.on('close', function(removed, done) {
+		this.on("close", function(removed, done) {
 			if (removed) {
 				// This node has been deleted
 			} else {
@@ -791,13 +838,13 @@ module.exports = function(RED) {
 			node.status({});
 			done();
 		});
-    }
-    RED.nodes.registerType("cos-qry",COSQryNode);
+	}
+	RED.nodes.registerType("cos-qry",COSQryNode);
 
 
 	// Cloud Object Storage Config Node
 	function COSConfigNode(n) {
-        // Create a RED node
+		// Create a RED node
 		RED.nodes.createNode(this,n);
 		
 		// Store local copies of the node configuration (as defined in the .html)
@@ -815,4 +862,4 @@ module.exports = function(RED) {
 		// Credentials as password fields --- missing 
 	}
 	RED.nodes.registerType("cos-config",COSConfigNode);
-}
+};
