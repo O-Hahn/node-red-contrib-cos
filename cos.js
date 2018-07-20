@@ -548,7 +548,7 @@ module.exports = function(RED) {
 									// Send error back 
 									console.log(err);
 									node.status({fill:"red",shape:"ring",text:"cos.status.failed"});
-									node.error(RED._("cos.error.bucket-not-created", {err:err}));
+									node.error(RED._("cos.error.bucket-not-created", {err:message}));
 									return;
 								}
 								// Put the Object to the IBM Cloud Object Storage 			
@@ -606,6 +606,53 @@ module.exports = function(RED) {
 							return;
 						}
 					}
+
+					// Put the Object to the IBM Cloud Object Storage 			
+					cos.putObject({
+						Bucket: bucket,
+						Body: body,
+						Key: objectname
+					}, function(err, data) {
+						if (err) {
+							// Send error back 
+							node.status({fill:"red",shape:"ring",text:"cos.status.failed"});
+							node.error(RED._("cos.error.upload-failed", {err:err}));
+							return;
+						}	
+						
+						// Provide the needed Feedback
+						msg.objectname = objectname;
+						msg.filefqn = filefqn;
+
+						console.log("Cloud Object Storage Put (log): object stored",objectname);
+					
+						// Generate URL to the object if needed 
+						if (geturl) {
+							// Get the URL to the object 
+							var gurl = cos.getSignedUrl("getObject", {
+								Bucket: bucket,
+								Key: objectname
+							}, function (err, url) {
+								if (err) {
+									// Send error back 
+									node.status({fill:"yellow",shape:"ring",text:"cos.status.url-gen-failed"});
+									node.error(RED._("cos.error.url-gen-failed", {err:err}));
+									return;
+								} 
+
+								console.log("Cloud Object Storage Put (log): The URL is", url);
+								msg.url = url;	
+							});
+
+						}
+
+						// Set the node-status
+						node.status({fill:"green",shape:"ring",text:"cos.status.ready"});
+
+						// Send the output back 
+						node.send(msg);
+					});
+					
 				});	
 			}			
 		});
