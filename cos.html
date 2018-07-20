@@ -248,6 +248,9 @@
         <dt class="optional">bucket <span class="property-type">string</span></dt>
         <dd> the existing bucket in which the object will be stored.</dd>
 
+        <dt class="optional">create <span class="property-type">string</span></dt>
+        <dd> indicates if the bucket should be created if not exists . Create could be 0 = no or 1 = yes.</dd>
+
         <dt class="optional">objectname <span class="property-type">string</span></dt>
         <dd> the unique name of the stored file in the Cloud Object Storage Service.</dd>
  
@@ -309,7 +312,7 @@
             objectname: {value:"", required:false},
             mode: {value:"0", required:true},
             filepath: {value:"", required:false},
-            filename: {value:"", required:true},
+            filename: {value:"", required:false},
             contentType: {value:"", required:true},
             geturl: {value:false, required:false},
             cosconfig: {value:"", type:"cos-config", required:true}
@@ -421,7 +424,14 @@
         <label for="node-input-cosconfig"><i class="fa fa-tasks"></i> <span data-i18n="cos.label.cosconfig"></span></label>
         <input type="text" id="node-input-cosconfig">
     </div>
-    <div class="form-row">
+    <div id="list" class="form-row">
+        <label for="node-input-list"><i class="fa fa-plus-square-o"></i> <span data-i18n="cos.label.list"></span></label>
+        <select id="node-input-list">
+            <option value="0" data-i18n="cos.options.buckets"></option>
+            <option value="1" data-i18n="cos.options.objects"></option>
+        </select>
+    </div>
+    <div id="bucket" class="form-row">
         <label for="node-input-bucket"><i class="fa fa-folder-open-o"></i> <span data-i18n="cos.label.bucket"></span></label>
         <input type="text" id="node-input-bucket" data-i18n="[placeholder]cos.placeholder.bucket">
     </div>
@@ -450,6 +460,9 @@
         </dt>
         <dd> the payload of the message to trigger the query. </dd>
 
+        <dt>list <span class="property-type">string</span></dt>
+        <dd> select to query all buckets or all objects of a bucket. </dd>
+
         <dt>bucket <span class="property-type">string</span></dt>
         <dd> the existing bucket where all objects will be listed.</dd>
  
@@ -466,14 +479,28 @@
         category: 'storage',     
         defaults: {             
             name: {value:""},
-            bucket: {value:"", required:true},
-            maxkeys: {value:50, required:true},
+            list: {value:"0", required:true},
+            bucket: {value:"", required:false},
+            maxkeys: {value:50, required:false},
             cosconfig: {value:"", type:"cos-config", required:true}
         },
         inputs:1,               
         outputs:1, 
         icon: "cloud1_20x20.png",
         color: "#A6BBCF",
+        oneditprepare: function() {
+            $("#node-input-list").change(function() {
+                var choose = $("#node-input-list").val();
+                console.log(choose);
+                if (choose == "1") {
+                	$("#bucket").show();
+                	$("#maxkeys").show();
+                } else {
+                	$("#bucket").hide();
+                	$("#maykeys").hide();
+                }
+            });
+        },
 		label: function() {   
             return this.name || "cloud object storage qry";
         },

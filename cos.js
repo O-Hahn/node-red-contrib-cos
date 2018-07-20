@@ -448,80 +448,166 @@ module.exports = function(RED) {
 			node.status({fill:"green",shape:"dot",text:"cos.status.uploading"});
 
 			// Check if Bucket exists and create (if seleced)
-			if (create = "1") {
+			if (create == "0") {
+				// Put the Object to the IBM Cloud Object Storage 			
+				cos.putObject({
+					Bucket: bucket,
+					Body: body,
+					Key: objectname
+				}, function(err, data) {
+					if (err) {
+						// Send error back 
+						node.status({fill:"red",shape:"ring",text:"cos.status.failed"});
+						node.error(RED._("cos.error.upload-failed", {err:err}));
+						return;
+					}	
+					
+					// Provide the needed Feedback
+					msg.objectname = objectname;
+					msg.filefqn = filefqn;
+
+					console.log("Cloud Object Storage Put (log): object stored",objectname);
+				
+					// Generate URL to the object if needed 
+					if (geturl) {
+						// Get the URL to the object 
+						var gurl = cos.getSignedUrl("getObject", {
+							Bucket: bucket,
+							Key: objectname
+						}, function (err, url) {
+							if (err) {
+								// Send error back 
+								node.status({fill:"yellow",shape:"ring",text:"cos.status.url-gen-failed"});
+								node.error(RED._("cos.error.url-gen-failed", {err:err}));
+								return;
+							} 
+
+							console.log("Cloud Object Storage Put (log): The URL is", url);
+							msg.url = url;	
+						});
+
+					}
+
+					// Set the node-status
+					node.status({fill:"green",shape:"ring",text:"cos.status.ready"});
+
+					// Send the output back 
+					node.send(msg);
+				});
+			} else {
 				cos.headBucket({
 					Bucket: bucket
 				}, function (err, data) {
 					if (err) {
 						// Bucket not exists 
 						if (err.statusCode === 404) {
-							// Create Bucket 
+							// Define the right Storage Location on Standard Storage Class
+							var location;
+
+							switch(node.cosconfig.location) {
+							case "us-geo":
+								location = "us-standard";
+								break;
+							case "eu-geo":
+								location = "eu-standard";
+								break;
+							case "ap-geo":
+								location = "ap-standard";
+								break;
+							case "us-south":
+								location = "us-south-standard";
+								break;
+							case "us-east":
+								location = "us-east-standard";
+								break;
+							case "eu-gb":
+								location = "eu-gb-standard";
+								break;
+							case "eu-de":
+								location = "eu-de-standard";
+								break;
+							case "che01":
+								location = "che01-standard";
+								break;
+							case "tor01":
+								location = "tor01-standard";
+								break;
+							case "mel01":
+								location = "mel01-standard";
+								break;
+							}
+							
+							// Create the bucket
 							cos.createBucket({
-								Bucket: bucket
+								Bucket: bucket,
+								CreateBucketConfiguration: {
+									LocationConstraint: location
+								}								 
 							}, function(err, data) {
 								if (err) {
 									// Send error back 
+									console.log(err);
 									node.status({fill:"red",shape:"ring",text:"cos.status.failed"});
 									node.error(RED._("cos.error.bucket-not-created", {err:err}));
 									return;
 								}
+								// Put the Object to the IBM Cloud Object Storage 			
+								cos.putObject({
+									Bucket: bucket,
+									Body: body,
+									Key: objectname
+								}, function(err, data) {
+									if (err) {
+										// Send error back 
+										node.status({fill:"red",shape:"ring",text:"cos.status.failed"});
+										node.error(RED._("cos.error.upload-failed", {err:err}));
+										return;
+									}	
+									
+									// Provide the needed Feedback
+									msg.objectname = objectname;
+									msg.filefqn = filefqn;
+
+									console.log("Cloud Object Storage Put (log): object stored",objectname);
+								
+									// Generate URL to the object if needed 
+									if (geturl) {
+										// Get the URL to the object 
+										var gurl = cos.getSignedUrl("getObject", {
+											Bucket: bucket,
+											Key: objectname
+										}, function (err, url) {
+											if (err) {
+												// Send error back 
+												node.status({fill:"yellow",shape:"ring",text:"cos.status.url-gen-failed"});
+												node.error(RED._("cos.error.url-gen-failed", {err:err}));
+												return;
+											} 
+
+											console.log("Cloud Object Storage Put (log): The URL is", url);
+											msg.url = url;	
+										});
+
+									}
+
+									// Set the node-status
+									node.status({fill:"green",shape:"ring",text:"cos.status.ready"});
+
+									// Send the output back 
+									node.send(msg);
+								});
+
 							});	
 						} else {
 							// Send error back 
+							console.log(err);
 							node.status({fill:"red",shape:"ring",text:"cos.status.failed"});
 							node.error(RED._("cos.error.bucket-not-created", {err:err}));
 							return;
 						}
 					}
 				});	
-			}
-
-			// Put the Object to the IBM Cloud Object Storage 			
-			cos.putObject({
-				Bucket: bucket,
-				Body: body,
-				Key: objectname
-			}, function(err, data) {
-				if (err) {
-					// Send error back 
-					node.status({fill:"red",shape:"ring",text:"cos.status.failed"});
-					node.error(RED._("cos.error.upload-failed", {err:err}));
-					return;
-				}	
-				
-				// Provide the needed Feedback
-				msg.objectname = objectname;
-				msg.filefqn = filefqn;
-
-				console.log("Cloud Object Storage Put (log): object stored",objectname);
-			
-				// Generate URL to the object if needed 
-				if (geturl) {
-					// Get the URL to the object 
-					var gurl = cos.getSignedUrl("getObject", {
-						Bucket: bucket,
-						Key: objectname
-					}, function (err, url) {
-						if (err) {
-							// Send error back 
-							node.status({fill:"yellow",shape:"ring",text:"cos.status.url-gen-failed"});
-							node.error(RED._("cos.error.url-gen-failed", {err:err}));
-							return;
-						} 
-
-						console.log("Cloud Object Storage Put (log): The URL is", url);
-						msg.url = url;	
-					});
-
-				}
-
-				// Set the node-status
-				node.status({fill:"green",shape:"ring",text:"cos.status.ready"});
-
-				// Send the output back 
-				node.send(msg);
-			});
-			
+			}			
 		});
 
 		// respond to close....
@@ -698,6 +784,7 @@ module.exports = function(RED) {
 		RED.nodes.createNode(this,n);
 
 		// Store local copies of the node configuration (as defined in the .html)
+		this.list = n.list;
 		this.bucket = n.bucket;
 		this.objectname = n.objectname;
 		this.maxkeys = n.maxkeys;
@@ -726,6 +813,7 @@ module.exports = function(RED) {
 			var ibmcos = require('ibm-cos-sdk');
 
 			var objectname; 
+			var list;
 			var bucket;
 			var maxkeys = node.maxkeys || msg.maxkeys;
 			var config;
@@ -735,6 +823,13 @@ module.exports = function(RED) {
 
 			// Set the status to green
 			node.status({fill:"green",shape:"ring",text:"cos.status.connected"});
+
+			// Check List
+			if ((msg.list) && (msg.list.trim() !== "")) {
+				list = msg.list;
+			} else {
+				list = node.list;
+			}
 
 			// Check ObjectName
 			if ((msg.objectname) && (msg.objectname.trim() !== "")) {
@@ -789,43 +884,82 @@ module.exports = function(RED) {
 			// Get the Object from the Cloud Object Storage 			
 			node.status({fill:"green",shape:"dot",text:"cos.status.query"});
 
-			cos.listObjects({
-				Bucket: bucket,
-				MaxKeys: maxkeys
-				//				Key: objectname
-			}, function(err, data) {
-				if (err) {
-					// Send error back 
-					node.status({fill:"red",shape:"ring",text:"cos.status.failed"});
-					node.error(RED._("cos.errors.object-not-found", {err:err}));
-					return;
-				} 
-
-				// store feedback values
-				var num = data.Contents.length;
-				var retarr = new Array();
-				var x;
-
-				for (x in data.Contents) {
-					var elem = {
-						Key: data.Contents[x].Key,
-						Size: data.Contents[x].Size
-					};
-					retarr.push(elem);
-				}
-
-				// store feedback values
-				msg.found = num;
-				msg.payload = retarr;
+			// List buckets or list objects
+			if (list == "1") {
+				// List of all objects
+				cos.listObjects({
+					Bucket: bucket,
+					MaxKeys: maxkeys
+					//				Key: objectname
+				}, function(err, data) {
+					if (err) {
+						// Send error back 
+						node.status({fill:"red",shape:"ring",text:"cos.status.failed"});
+						node.error(RED._("cos.errors.object-not-found", {err:err}));
+						return;
+					} 
 	
-				console.log("Cloud Object Storage Qry (log): objects listed");
-															
-				// Set the node-status
-				node.status({fill:"green",shape:"ring",text:"cos.status.ready"});
+					// store feedback values
+					var num = data.Contents.length;
+					var retarr = new Array();
+					var x;
+	
+					for (x in data.Contents) {
+						var elem = {
+							Key: data.Contents[x].Key,
+							Size: data.Contents[x].Size
+						};
+						retarr.push(elem);
+					}
+	
+					// store feedback values
+					msg.found = num;
+					msg.payload = retarr;
+		
+					console.log("Cloud Object Storage Qry (log): objects listed");
+																
+					// Set the node-status
+					node.status({fill:"green",shape:"ring",text:"cos.status.ready"});
+	
+					// Send the output back 
+					node.send(msg);
+				});
+			} else {
+				// List all buckets
+				cos.listBuckets({}, function(err, data) {
+					if (err) {
+						// Send error back 
+						node.status({fill:"red",shape:"ring",text:"cos.status.failed"});
+						node.error(RED._("cos.errors.buckets-not-found", {err:err}));
+						return;
+					} 
 
-				// Send the output back 
-				node.send(msg);
-			});
+					// store feedback values
+					var num = data.Buckets.length;
+					var retarr = new Array();
+					var x;
+
+					for (x in data.Buckets) {
+						var elem = {
+							Name: data.Buckets[x].Name
+							// CreationDate: data.Bucktes[x].CreationDate
+						};
+						retarr.push(elem);
+					}
+
+					// store feedback values
+					msg.found = num;
+					msg.payload = retarr;
+		
+					console.log("Cloud Object Storage Qry (log): buckets listed");
+																
+					// Set the node-status
+					node.status({fill:"green",shape:"ring",text:"cos.status.ready"});
+
+					// Send the output back 
+					node.send(msg);
+				});
+			}
 		});
  
 		// respond to close....

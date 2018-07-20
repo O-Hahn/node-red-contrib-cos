@@ -4,6 +4,7 @@
 			"cosconfig": "Cloud Object Storage Configuration",
 			"bucket": "Bucket",
 			"create": "Create", 
+			"select" : "Select",
 			"objectname" : "Object Name",
 			"mode" : "Mode",
 			"filename": "File Name",
@@ -26,7 +27,7 @@
 		"options" : {
 			"filemode" : "File",
 			"buffermode" : "msg.payload",
-			"select" : "select",
+			"list" : "select",
             "image_jpeg" : "image/jpeg",
             "image_png" : "image/png",
             "image_gif" : "image/gif",
@@ -43,6 +44,8 @@
             "application_xml" : "application/xml",
             "application_javascript" : "application/javascript",
 			"application_pdf" : "application/pdf",
+			"buckets" : "Buckets",
+			"objects" : "Objects",
 			"yes" : "Yes",
 			"no" : "No"
 		},
@@ -96,6 +99,7 @@
 			"bucket-not-exist" : "Bucket not found:  __err__",
 			"bucket-not-created" : "Bucket not created:  __err__",
 			"file-not-found": "File not found",
+			"buckets-not-found" : "Buckets not found: __err__", 
 			"object-not-found" : "Object in Bucket not found: __err__", 
 			"upload-failed" : "upload failed:  __err__",
 			"download-failed": "download failed: __err__",
