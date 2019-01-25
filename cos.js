@@ -954,8 +954,12 @@ module.exports = function(RED) {
 					for (x in data.Contents) {
 						var elem = {
 							Key: data.Contents[x].Key,
-							Size: data.Contents[x].Size
+							Size: data.Contents[x].Size,
+							LastModified: data.Contents[x].LastModified,
+							ETag: data.Contents[x].ETag,
+							StorageClass: data.Contents[x].StorageClass
 						};
+						// var elem = data.Contents[x];
 						retarr.push(elem);
 					}
 	
