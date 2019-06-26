@@ -1,4 +1,4 @@
-# 20190626 updated cos.js. Output presign url on msg.url. Controlled geturl bool setting in node or value of msg,geturl.
+20190626 updated cos.js. Output presign url on msg.url. Controlled geturl bool setting in node or value of msg,geturl.
 
 # node-red-contrib-cos
 
