@@ -220,7 +220,8 @@ module.exports = function(RED) {
 						} 
 
 						console.log("Cloud Object Storage Get (log): The URL is", url);
-						msg.url = url;	
+						msg.url = url;
+						node.send(msg);
 					});
 
 				}
@@ -229,7 +230,9 @@ module.exports = function(RED) {
 				node.status({fill:"green",shape:"ring",text:"cos.status.ready"});
 
 				// Send the output back 
-				node.send(msg);	
+				if (!geturl){
+					node.send(msg);
+				}
 			});
 		});
 
@@ -483,7 +486,8 @@ module.exports = function(RED) {
 							} 
 
 							console.log("Cloud Object Storage Put (log): The URL is", url);
-							msg.url = url;	
+							msg.url = url;
+							node.send(msg);
 						});
 
 					}
@@ -492,7 +496,9 @@ module.exports = function(RED) {
 					node.status({fill:"green",shape:"ring",text:"cos.status.ready"});
 
 					// Send the output back 
-					node.send(msg);
+					if (!geturl){
+						node.send(msg);
+					}
 				});
 			} else {
 				cos.headBucket({
@@ -585,7 +591,8 @@ module.exports = function(RED) {
 											} 
 
 											console.log("Cloud Object Storage Put (log): The URL is", url);
-											msg.url = url;	
+											msg.url = url;
+											node.send(msg); // burton boucher 20190625 presign url output
 										});
 
 									}
@@ -594,7 +601,10 @@ module.exports = function(RED) {
 									node.status({fill:"green",shape:"ring",text:"cos.status.ready"});
 
 									// Send the output back 
-									node.send(msg);
+									// burton boucher 20190626
+									if (!geturl){
+										node.send(msg);
+									};
 								});
 
 							});	
