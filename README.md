@@ -1,5 +1,3 @@
-20190626 updated cos.js. Output presign url on msg.url. Controlled geturl bool setting in node or value of msg,geturl.
-
 # node-red-contrib-cos
 
 A <a href="http://nodered.org" target="_new">Node-RED</a> node to store, delete, restore and query objects from the
