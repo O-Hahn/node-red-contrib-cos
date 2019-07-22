@@ -69,6 +69,7 @@ module.exports = function(RED) {
 			var bucket;
 			var mode;
 			var geturl = node.geturl || msg.geturl;
+			var expiry = node.geturlExpiry;
 			var config;
 
 			// Help Debug
@@ -165,6 +166,25 @@ module.exports = function(RED) {
 			// Create Access Instance 
 			var cos = new ibmcos.S3(config);
 
+			if(mode == "2") {
+				// Generate URL to the object if needed 
+				var gurl = cos.getSignedUrl("getObject", {
+					Bucket: bucket,
+					Key: objectname,
+					Expiry: expiry
+				}, function (err, url) {						
+					if (err) {
+						// Send error back 
+						node.status({fill:"yellow",shape:"ring",text:"cos.status.url-gen-failed"});
+						node.error(RED._("cos.error.url-gen-failed", {err:err}));
+						return;
+					} 
+					console.log("Cloud Object Storage Get (log): The URL is", url);
+					msg.url = url;
+					msg.payload = '';
+				});	
+			}
+			else {
 			// Get the Object from the Cloud Object Storage 			
 			node.status({fill:"green",shape:"dot",text:"cos.status.downloading"});
 			cos.getObject({
@@ -210,7 +230,8 @@ module.exports = function(RED) {
 					// Get the URL to the object 
 					var gurl = cos.getSignedUrl("getObject", {
 						Bucket: bucket,
-						Key: objectname
+						Key: objectname,
+						Expiry: expiry
 					}, function (err, url) {
 						if (err) {
 							// Send error back 
@@ -231,6 +252,7 @@ module.exports = function(RED) {
 				// Send the output back 
 				node.send(msg);	
 			});
+			};
 		});
 
 		// respond to close....
