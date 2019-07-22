@@ -208,7 +208,7 @@ module.exports = function(RED) {
 					fs.writeFileSync(filefqn, data, opt);
 					msg.payload = filefqn;
 					msg.filename = filename;
-					msg.filepaht = filepath;
+					msg.filepath = filepath;
 					msg.objectname = objectname;
 			
 					console.log("Cloud Object Storage Get (log): write into file - ", filefqn);
@@ -319,6 +319,7 @@ module.exports = function(RED) {
 			var bucket;
 			var create;
 			var geturl = node.geturl || msg.geturl;
+			var expiry = node.geturlExpiry;
 			var config;
 
 			// Help Debug
@@ -495,7 +496,8 @@ module.exports = function(RED) {
 						// Get the URL to the object 
 						var gurl = cos.getSignedUrl("getObject", {
 							Bucket: bucket,
-							Key: objectname
+							Key: objectname,
+							Expiry: expiry
 						}, function (err, url) {
 							if (err) {
 								// Send error back 
