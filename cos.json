@@ -85,7 +85,7 @@
             "downloading": "downloading",
 			"uploading": "uploading",
 			"deleting" : "deleting",
-			"url-geb-failed" : "url-gen-failed",
+			"url-gen-failed" : "url-gen-failed",
 			"error": "error",
 			"ready" : "ready", 
 			"query" : "query", 
