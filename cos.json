@@ -11,7 +11,7 @@
 			"filepath": "File Path",
 			"fileformat": "File Format",
 			"geturl" : "Get URL",
-			"geturlExpiry": "Duration (seconds):",
+			"geturlExpiry": "Duration (seconds)",
 			"name": "Name",
 			"contentType" : "Content Type", 
 			"maxkeys" : "Maximum number keys returned",
