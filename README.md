@@ -27,6 +27,7 @@ Saves the given object (from a file or from the provided buffer) to the IBM Clou
 ### COS Object Get
 
 Restores the object from the IBM Cloud Object Storage service as a payload or a local file.
+Can also be used to generate a [presigned URL](https://cloud.ibm.com/docs/services/cloud-object-storage/hmac?topic=cloud-object-storage-iam-public-access#public-access-object) to enable short-term public access, with or without downloading the object.
 
 ### COS Object Del
 
