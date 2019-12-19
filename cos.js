@@ -977,6 +977,12 @@ module.exports = function(RED) {
 						// Send error back
 						node.status({fill:"red",shape:"ring",text:"cos.status.failed"});
 						node.error(RED._("cos.errors.object-not-found", {err:err}));
+
+						msg.error = err;
+						msg.found = 0;
+						msg.payload = [];
+	
+						node.send(msg);
 						return;
 					}
 
