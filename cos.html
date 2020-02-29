@@ -12,7 +12,7 @@
   WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
   See the License for the specific language governing permissions and
   limitations under the License.
-  
+
   Author: Olaf Hahn
 -->
 
@@ -35,6 +35,7 @@
         <select id="node-input-mode">
             <option value="0" data-i18n="cos.options.filemode"></option>
             <option value="1" data-i18n="cos.options.buffermode"></option>
+            <option value="2" data-i18n="cos.options.urlmode"></option>
         </select>
     </div>
     <div id="filename" class="form-row">
@@ -48,6 +49,10 @@
     <div id="geturl" class="form-row">
         <label for="node-input-geturl"><i class="fa fa-link"></i> <span data-i18n="cos.label.geturl"></span></label>
         <input type="checkbox" style="width: 15px" id="node-input-geturl">
+    </div>
+    <div id="geturlExpiry" class="form-row">
+	 <label for="node-input-geturlExpiry"><i class="fa fa-link"></i> <span data-i18n="cos.label.geturlExpiry"></span></label>
+        <input type="number" value=900 min=1 max=604800 defaultValue=900 style="width: 75px" id="node-input-geturlExpiry">
     </div>
 
     <br/>
@@ -74,7 +79,7 @@
 
         <dt class="optional">objectname <span class="property-type">string</span></dt>
         <dd> the unique name of the stored file in the Cloud Object Storage Service.</dd>
- 
+
         <dt class="optional">mode <span class="property-type">string</span></dt>
         <dd> indicates where to store the object. Mode could be 0 or 1.</dd>
 
@@ -85,7 +90,8 @@
         <dd> to override the filepath.</dd>
 
         <dt class="optional">geturl <span class="property-type">boolean</span></dt>
-        <dd>if you want to get the URL to the object set it to <code>true</code>.</dd>
+        <dd>if you want to get the URL to the object set it to <code>true</code>.
+	You can also set the expiry time in seconds for the URL, up to one week (604800)</dd>
 
     </dl>
 
@@ -123,8 +129,8 @@
 
 <script type="text/javascript">
     RED.nodes.registerType('cos-get',{
-        category: 'storage',     
-        defaults: {             
+        category: 'storage',
+        defaults: {
             name: {value:""},
             bucket: {value:"", required:true},
             objectname: {value:"", required:true},
@@ -132,10 +138,11 @@
             filepath: {value:"", required:false},
             filename: {value:"", required:false},
             geturl: {value:false, required:false},
+	        geturlExpiry: {value:900, required:false},
             cosconfig: {value:"", type:"cos-config", required:true}
         },
-        inputs:1,               
-        outputs:1, 
+        inputs:1,
+        outputs:1,
         icon: "cloud1_20x20.png",
         color: "#A6BBCF",
         oneditprepare: function() {
@@ -149,9 +156,13 @@
                 	$("#filename").hide();
                 	$("#filepath").hide();
                 }
+		if (choose == "2") {
+			$("#node-input.geturl").prop("checked", true);
+		}
+
             });
         },
-		label: function() {   
+		label: function() {
             return this.name || "cloud object storage get";
         },
         labelStyle: function() {
@@ -203,13 +214,13 @@
             <option value="image/gif" data-i18n="cos.options.image_gif"></option>
             <option value="video/mpeg" data-i18n="cos.options.video_mpeg"></option>
             <option value="text/comma-separated-values" data-i18n="cos.options.text_comma-separated-values"></option>
-            <option value="text/plain" data-i18n="cos.options.text_plain"></option>	
-            <option value="text/rtf" data-i18n="cos.options.text_rtf"></option>	
+            <option value="text/plain" data-i18n="cos.options.text_plain"></option>
+            <option value="text/rtf" data-i18n="cos.options.text_rtf"></option>
             <option value="audio/x-wav" data-i18n="cos.options.audio_x-wav"></option>
             <option value="audio/x-mpeg" data-i18n="cos.options.audio_x-mpeg"></option>
-            <option value="application/msexcel" data-i18n="cos.options.application_msexcel"></option>	
+            <option value="application/msexcel" data-i18n="cos.options.application_msexcel"></option>
             <option value="application/msword" data-i18n="cos.options.application_msword"></option>
-            <option value="application/mspowerpoint" data-i18n="cos.options.application_mspowerpoint"></option>	
+            <option value="application/mspowerpoint" data-i18n="cos.options.application_mspowerpoint"></option>
             <option value="application/json" data-i18n="cos.options.application_json"></option>
             <option value="application/xml" data-i18n="cos.options.application_xml"></option>
             <option value="application/javascript" data-i18n="cos.options.application_javascript"></option>
@@ -253,7 +264,7 @@
 
         <dt class="optional">objectname <span class="property-type">string</span></dt>
         <dd> the unique name of the stored file in the Cloud Object Storage Service.</dd>
- 
+
         <dt class="optional">mode <span class="property-type">string</span></dt>
         <dd> indicates where to load the object from. Mode could be 0 or 1.</dd>
 
@@ -304,8 +315,8 @@
 
 <script type="text/javascript">
     RED.nodes.registerType('cos-put',{
-        category: 'storage',     
-        defaults: {             
+        category: 'storage',
+        defaults: {
             name: {value:""},
             bucket: {value:"", required:true},
             create: {value:"0", required:true},
@@ -317,8 +328,8 @@
             geturl: {value:false, required:false},
             cosconfig: {value:"", type:"cos-config", required:true}
         },
-        inputs:1,               
-        outputs:1, 
+        inputs:1,
+        outputs:1,
         icon: "cloud1_20x20.png",
         color: "#A6BBCF",
         oneditprepare: function() {
@@ -334,7 +345,7 @@
                 }
             });
         },
-		label: function() {   
+		label: function() {
             return this.name || "cloud object storage put";
         },
         labelStyle: function() {
@@ -384,7 +395,7 @@
 
         <dt class="optional">objectname <span class="property-type">string</span></dt>
         <dd> the unique name of the stored file in the Cloud Object Storage Service.</dd>
- 
+
     </dl>
 
     <h3>Details</h3>
@@ -396,18 +407,18 @@
 
 <script type="text/javascript">
     RED.nodes.registerType('cos-del',{
-        category: 'storage',     
-        defaults: {             
+        category: 'storage',
+        defaults: {
             name: {value:""},
             bucket: {value:"", required:true},
             objectname: {value:"", required:true},
             cosconfig: {value:"", type:"cos-config", required:true}
         },
-        inputs:1,               
-        outputs:1, 
+        inputs:1,
+        outputs:1,
         icon: "cloud1_20x20.png",
         color: "#A6BBCF",
-		label: function() {   
+		label: function() {
             return this.name || "cloud object storage del";
         },
         labelStyle: function() {
@@ -465,7 +476,7 @@
 
         <dt>bucket <span class="property-type">string</span></dt>
         <dd> the existing bucket where all objects will be listed.</dd>
- 
+
     </dl>
 
     <h3>Details</h3>
@@ -476,16 +487,16 @@
 
 <script type="text/javascript">
     RED.nodes.registerType('cos-qry',{
-        category: 'storage',     
-        defaults: {             
+        category: 'storage',
+        defaults: {
             name: {value:""},
             list: {value:"0", required:true},
             bucket: {value:"", required:false},
             maxkeys: {value:50, required:false},
             cosconfig: {value:"", type:"cos-config", required:true}
         },
-        inputs:1,               
-        outputs:1, 
+        inputs:1,
+        outputs:1,
         icon: "cloud1_20x20.png",
         color: "#A6BBCF",
         oneditprepare: function() {
@@ -501,7 +512,7 @@
                 }
             });
         },
-		label: function() {   
+		label: function() {
             return this.name || "cloud object storage qry";
         },
         labelStyle: function() {
@@ -540,7 +551,7 @@
                 <option value="che01" data-i18n="cos.locations.che01"></option>
                 <option value="mel01" data-i18n="cos.locations.mel01"></option>
                 <option value="tor01" data-i18n="cos.locations.tor01"></option>
-                <option value="manual" data-i18n="cos.locations.manual"></option>            
+                <option value="manual" data-i18n="cos.locations.manual"></option>
             </select>
     </div>
     <div id="endpoint" class="form-row">
@@ -560,7 +571,7 @@
         <input type="text" id="node-config-input-accesskey" data-i18n="[placeholder]cos.placeholder.accesskey">
     </div>
 
-    
+
     <br/>
     <div class="form-row">
         <label for="node-config-input-name"><i class="fa fa-tag"></i> Name</label>
@@ -583,7 +594,7 @@
             name: {value:"",required:true}
         },
         oneditprepare: function() {
-            
+
             $("#node-config-input-hmac").change(function() {
                 console.log("HMAC:" + $("#node-config-input-hmac").is(":checked"));
 
@@ -597,7 +608,7 @@
            });
 
             $("#node-config-input-location").change(function() {
- 
+
                 var choose = $("#node-config-input-location").val();
                 console.log(choose);
 
