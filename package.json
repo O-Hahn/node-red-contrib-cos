@@ -1,11 +1,11 @@
 {
-  "name": "node-red-contrib-cos",
-  "version": "0.0.19",
-  "description": "Node-Red Nodes for IBM Cloud Object Storage service.",
+  "name": "@dianadujing/node-red-contrib-ibm-cos",
+  "version": "0.0.1",
+  "description": "Node-Red Nodes for IBM Cloud Object Storage service.Forked from https://github.com/O-Hahn/node-red-contrib-cos",
   "main": "cos.js",
   "repository": {
     "type": "git",
-    "url": "git@github.com:O-Hahn/node-red-contrib-cos"
+    "url": "git+ssh://git@github.com/dianadujing/node-red-contrib-cos.git"
   },
   "keywords": [
     "ibm",
@@ -17,10 +17,7 @@
     "s3",
     "object storage"
   ],
-  "author": {
-    "name": "Olaf Hahn",
-    "email": "olaf@fam-hahn.com"
-  },
+  "author": "Olaf Hahn <olaf@fam-hahn.com>",
   "license": "Apache-2.0",
   "node-red": {
     "nodes": {
@@ -35,5 +32,12 @@
     "fs": "latest",
     "ibm-cos-sdk": "latest",
     "is-utf8": "latest"
+  },
+  "homepage": "https://github.com/dianadujing/node-red-contrib-cos#readme",
+  "directories": {
+    "lib": "lib"
+  },
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
   }
 }

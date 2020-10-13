@@ -1,4 +1,4 @@
-# node-red-contrib-cos
+# node-red-contrib-ibm-cos
 
 A <a href="http://nodered.org" target="_new">Node-RED</a> node to store, delete, restore and query objects from the
 <a href="https://cloud.ibm.com/docs/services/cloud-object-storage/about-cos.html#about-ibm-cloud-object-storage" target="_new">IBM Cloud Object Storage</a> service. This service is a S3 like object storage hosted on the <a href="https://cloud.ibm.com" target="_new">IBM Cloud</a>. 
@@ -8,7 +8,7 @@ A <a href="http://nodered.org" target="_new">Node-RED</a> node to store, delete,
 
 Run the following command in the root directory of your Node-RED install or home directory (usually ~/.node-red) and will also install necessary libraries automatically.
 ```sh
-        npm install node-red-contrib-cos
+        npm install node-red-contrib-ibm-cos
 ```
 This node was tested under Nodejs V8.x LTS and NPM 6.x on NodeRed 1.0.
 
