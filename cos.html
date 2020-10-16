@@ -585,7 +585,7 @@
         defaults: {
             apiKeyId: {value:"",required:true},
             location: {value:"",required:true},
-            ibmAuthEndpoint: {value:"https://iam.ng.bluemix.net/oidc/token",required:true},
+            ibmAuthEndpoint: {value:"https://iam.cloud.ibm.com/oidc/token",required:true},
             endpoint: {value:"",required:true},
             serviceInstanceId: {value:"",required:true},
             hmac: {value:false, required: true},
@@ -620,34 +620,34 @@
 
                 switch (choose ) {
                     case "us-geo":
-                        $("#node-config-input-endpoint").val("s3-api.us-geo.objectstorage.softlayer.net");
+                        $("#node-config-input-endpoint").val("s3.us.cloud-object-storage.appdomain.cloud");
                         break;
                     case "eu-geo":
-                        $("#node-config-input-endpoint").val("s3.eu-geo.objectstorage.softlayer.net");
+                        $("#node-config-input-endpoint").val("s3.eu.cloud-object-storage.appdomain.cloud");
                         break;
                     case "ap-geo":
-                        $("#node-config-input-endpoint").val("s3.ap-geo.objectstorage.softlayer.net");
+                        $("#node-config-input-endpoint").val("s3.ap.cloud-object-storage.appdomain.cloud");
                         break;
                     case "us-south":
-                        $("#node-config-input-endpoint").val("s3.us-south.objectstorage.softlayer.net");
+                        $("#node-config-input-endpoint").val("s3.us-south.cloud-object-storage.appdomain.cloud");
                         break;
                     case "us-east":
-                        $("#node-config-input-endpoint").val("s3.us-east.objectstorage.softlayer.net");
+                        $("#node-config-input-endpoint").val("s3.us-east.cloud-object-storage.appdomain.cloud");
                         break;
                     case "eu-gb":
-                        $("#node-config-input-endpoint").val("s3.eu-gb.objectstorage.softlayer.net");
+                        $("#node-config-input-endpoint").val("s3.eu-gb.cloud-object-storage.appdomain.cloud");
                         break;
                     case "eu-de":
-                        $("#node-config-input-endpoint").val("s3.eu-de.objectstorage.softlayer.net");
+                        $("#node-config-input-endpoint").val("s3.eu-de.cloud-object-storage.appdomain.cloud");
                         break;
                     case "che01":
-                        $("#node-config-input-endpoint").val("s3.che01.objectstorage.softlayer.net");
+                        $("#node-config-input-endpoint").val("s3.che01.cloud-object-storage.appdomain.cloud");
                         break;
                     case "tor01":
-                        $("#node-config-input-endpoint").val("s3.tor01.objectstorage.softlayer.net");
+                        $("#node-config-input-endpoint").val("s3.tor01.cloud-object-storage.appdomain.cloud");
                         break;
                     case "mel01":
-                        $("#node-config-input-endpoint").val("s3.mel01.objectstorage.softlayer.net");
+                        $("#node-config-input-endpoint").val("s3.mel01.cloud-object-storage.appdomain.cloud");
                         break;
                     }
              });
