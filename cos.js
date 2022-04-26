@@ -480,7 +480,8 @@ module.exports = function(RED) {
 				cos.putObject({
 					Bucket: bucket,
 					Body: body,
-					Key: objectname
+					Key: objectname,
+					'Content-Type': contentType
 				}, function(err, data) {
 					if (err) {
 						// Send error back
@@ -586,7 +587,8 @@ module.exports = function(RED) {
 								cos.putObject({
 									Bucket: bucket,
 									Body: body,
-									Key: objectname
+									Key: objectname,
+									'Content-Type': contentType
 								}, function(err, data) {
 									if (err) {
 										// Send error back
@@ -645,7 +647,8 @@ module.exports = function(RED) {
 					cos.putObject({
 						Bucket: bucket,
 						Body: body,
-						Key: objectname
+						Key: objectname,
+						'Content-Type': contentType
 					}, function(err, data) {
 						if (err) {
 							// Send error back
