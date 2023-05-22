@@ -70,7 +70,7 @@ module.exports = function(RED) {
 			var bucket;
 			var mode;
 			var geturl = node.geturl || msg.geturl;
-			var expiry = node.geturlExpiry;
+			var expiry = parseInt(node.geturlExpiry);
 			var config;
 
 			// Help Debug
