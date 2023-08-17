@@ -972,6 +972,7 @@ module.exports = function(RED) {
 			if (list == "1") {
 				// List of all objects
 				cos.listObjects({
+					Prefix: objectname,
 					Bucket: bucket,
 					MaxKeys: maxkeys
 					//				Key: objectname
